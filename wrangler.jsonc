@@ -1,0 +1,49 @@
+{
+  "name": "golden-years-api-next",
+  "main": "src/entrypoints/http.ts",
+  "compatibility_date": "2026-05-18",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  // Hyperdrive origin (dashboard) must be Supabase session pooler :5432 — not transaction :6543.
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "e68c01eb231e4720bb2ebf10cafd758d"
+    }
+  ],
+  "vars": {
+    "CORS_ORIGIN": "http://localhost:5173",
+    "SESSION_COOKIE_NAME": "gy_session"
+  },
+  "env": {
+    "local": {
+      "vars": {
+        "CORS_ORIGIN": "http://localhost:5173",
+        "SESSION_COOKIE_NAME": "gy_session"
+      },
+      "hyperdrive": [
+        {
+          "binding": "HYPERDRIVE",
+          "id": "e68c01eb231e4720bb2ebf10cafd758d",
+          // Default local Postgres — override in .env.local.local if needed
+          "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:5432/postgres"
+        }
+      ]
+    },
+    "remote": {
+      "vars": {
+        "CORS_ORIGIN": "http://localhost:5173",
+        "SESSION_COOKIE_NAME": "gy_session"
+      },
+      "hyperdrive": [
+        {
+          "binding": "HYPERDRIVE",
+          "id": "e68c01eb231e4720bb2ebf10cafd758d"
+          // Set CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE in .env.remote.local
+        }
+      ]
+    }
+  }
+}
