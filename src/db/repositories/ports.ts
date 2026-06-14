@@ -1,0 +1,122 @@
+import type { IdempotencyRecord } from "@/db/repositories/inMemoryStore";
+import type {
+  ArticleRow,
+  FacilityRow,
+  ReferenceItemRow,
+  ReviewRow,
+  SessionRow,
+  TourRequestRow,
+  UserRow,
+} from "@/db/schema/types";
+import type { ActorRole } from "@/shared/request-context/context";
+import type { FacilitySearchInput } from "./facilityRepository";
+
+export interface SavedFacilityRecord {
+  id: string;
+  user_id: string;
+  facility_id: string;
+  created_at: Date;
+}
+
+export interface AuditRecord {
+  id: string;
+  actor_user_id: string | null;
+  action: string;
+  resource_type: string;
+  resource_id: string;
+  metadata: unknown;
+  created_at: Date;
+}
+
+export interface OutboxRecord {
+  id: string;
+  event_type: string;
+  aggregate_type: string;
+  aggregate_id: string;
+  payload: unknown;
+  status: "pending" | "sent" | "failed";
+  attempts: number;
+  created_at: Date;
+}
+
+export interface FacilityRepositoryPort {
+  listPublic(input: FacilitySearchInput): Promise<{ rows: FacilityRow[]; total: number; hasMore: boolean }>;
+  findPublicById(idOrSlug: string): Promise<FacilityRow>;
+  listPublicByIds(ids: Set<string>): Promise<FacilityRow[]>;
+}
+
+export interface ReviewRepositoryPort {
+  listPublishedForFacility(
+    facilityId: string,
+    limit: number,
+    offset: number,
+  ): Promise<{ rows: ReviewRow[]; total: number; hasMore: boolean }>;
+  allPublished(): Promise<ReviewRow[]>;
+}
+
+export interface ReferenceRepositoryPort {
+  getSearchOptions(): Promise<{
+    care_types: Array<{ id: string; name: string }>;
+    regions: Array<{ id: string; name: string }>;
+    features: Array<{ id: string; name: string }>;
+    languages: Array<{ id: string; name: string }>;
+    price_range: { min: number; max: number; currency: string };
+  }>;
+}
+
+export interface UserRepositoryPort {
+  findByEmail(email: string): Promise<UserRow | undefined>;
+  findById(id: string): Promise<UserRow | undefined>;
+  rolesForUser(userId: string): Promise<ActorRole[]>;
+}
+
+export interface SessionRepositoryPort {
+  create(session: SessionRow): Promise<SessionRow>;
+  findActiveByTokenHash(tokenHash: string, now?: Date): Promise<SessionRow | undefined>;
+  revoke(sessionId: string, now?: Date): Promise<void>;
+}
+
+export interface SavedFacilityRepositoryPort {
+  listForUser(userId: string): Promise<SavedFacilityRecord[]>;
+  create(userId: string, facilityId: string): Promise<SavedFacilityRecord>;
+  delete(userId: string, facilityId: string): Promise<{ id: string }>;
+  savedFacilityIdsForUser(userId: string | null): Promise<Set<string>>;
+}
+
+export interface TourRepositoryPort {
+  create(row: TourRequestRow): Promise<TourRequestRow>;
+  listForUser(userId: string): Promise<TourRequestRow[]>;
+  countForUser(userId: string): Promise<number>;
+}
+
+export interface ArticleRepositoryPort {
+  listPublished(limit: number, offset: number): Promise<{ rows: ArticleRow[]; total: number; hasMore: boolean }>;
+  getPublished(idOrSlug: string): Promise<ArticleRow>;
+}
+
+export interface AuditRepositoryPort {
+  write(event: AuditRecord): Promise<AuditRecord>;
+}
+
+export interface OutboxRepositoryPort {
+  write(event: OutboxRecord): Promise<OutboxRecord>;
+}
+
+export interface IdempotencyRepositoryPort {
+  find(key: string, userId: string | null, now?: Date): Promise<IdempotencyRecord | undefined>;
+  create(record: IdempotencyRecord): Promise<IdempotencyRecord>;
+}
+
+export interface Repositories {
+  facilities: FacilityRepositoryPort;
+  reviews: ReviewRepositoryPort;
+  references: ReferenceRepositoryPort;
+  users: UserRepositoryPort;
+  sessions: SessionRepositoryPort;
+  savedFacilities: SavedFacilityRepositoryPort;
+  tours: TourRepositoryPort;
+  articles: ArticleRepositoryPort;
+  audit: AuditRepositoryPort;
+  outbox: OutboxRepositoryPort;
+  idempotency: IdempotencyRepositoryPort;
+}
