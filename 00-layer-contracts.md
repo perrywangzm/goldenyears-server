@@ -23,7 +23,7 @@ Rules:
 - No external provider calls.
 - No business state transitions.
 - Keep handlers thin: validate, derive request context, call application service, return envelope.
-- When an endpoint contract changes, update the route's validation schema, response schema/OpenAPI registration, handler parsing, returned projection shape, and route tests for the touched behavior. Some routes register OpenAPI separately from handlers; check both surfaces before regenerating clients.
+- When an endpoint contract changes, keep the route's validation schema, response schema/OpenAPI registration, handler parsing, returned projection, and route tests aligned for the touched behavior. Some routes register OpenAPI separately from handlers; check both surfaces before regenerating clients.
 - Generated OpenAPI/client files are outputs. Refresh them with repo scripts after source changes; never hand-edit generated artifacts as the source of truth.
 - When touching parsing or validation, preserve the standard `{ error }` envelope and the current status/code mapping for the affected failure path. Add or update focused route tests for those failure paths rather than broad validation refactors.
 

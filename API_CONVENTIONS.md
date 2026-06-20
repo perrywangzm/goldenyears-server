@@ -48,7 +48,7 @@ Verb vocabulary (closed set):
 Rules:
 
 - snake_case only.
-- No nested resources in the path (`/facilities/123/reviews` ❌). Use a dedicated list operation instead (`list_facility_reviews` with the facility `id` in the body).
+- No nested resources in the path (`/facilities/123/reviews` ❌). Use a dedicated list operation instead (`list_facility_reviews` with the facility identifier in the body).
 - One endpoint = one operation. Never overload by inspecting the body shape.
 
 ---
@@ -369,7 +369,7 @@ Before merging a new endpoint, confirm:
 - [ ] Path is `/api/v{N}/{verb}_{resource}` with a verb from §2.
 - [ ] `POST` + JSON only. No path or query params.
 - [ ] Request body validated against a schema (Zod / JSON Schema).
-- [ ] If a list/search endpoint: accepts `filters`, `sort`, `page`, `fields`; declares supported pagination type(s); returns the §6.2 envelope.
+- [ ] If a list/search endpoint: declares the supported request keys and pagination type(s); returns the §6.2 envelope.
 - [ ] If a mutation: documents create / patch / replace / delete semantics per §7.
 - [ ] All error responses use codes from §6.5 or add new ones to this doc.
 - [ ] Parsing/validation changes have focused tests for the affected status + `error.code` behavior.
