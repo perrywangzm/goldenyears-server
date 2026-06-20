@@ -70,6 +70,26 @@ describe("public marketplace APIs", () => {
     const unsupportedBody = await json(unsupported);
     expect(unsupported.status).toBe(422);
     expect(unsupportedBody.error.code).toBe("validation_failed");
+
+    const unsupportedSort = await client.post("/api/v1/search_facilities", {
+      sort: [{ field: "priceFrom", dir: "asc" }],
+    });
+    const unsupportedSortBody = await json(unsupportedSort);
+    expect(unsupportedSort.status).toBe(422);
+    expect(unsupportedSortBody.error).toMatchObject({
+      code: "validation_failed",
+      details: { field: "priceFrom" },
+    });
+
+    const invalidBounds = await client.post("/api/v1/search_facilities", {
+      map_bounds: { north: 1.33, south: 1.34, east: 103.86, west: 103.84 },
+    });
+    const invalidBoundsBody = await json(invalidBounds);
+    expect(invalidBounds.status).toBe(422);
+    expect(invalidBoundsBody.error).toMatchObject({
+      code: "validation_failed",
+      details: { field: "map_bounds" },
+    });
   });
 
   it("get_facility returns a complete safe detail projection", async () => {

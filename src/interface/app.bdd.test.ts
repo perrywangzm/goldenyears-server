@@ -98,6 +98,74 @@ describe("Feature: OpenAPI convention checks", () => {
 });
 
 describe("Feature: Error normalization", () => {
+  it("Scenario: Malformed JSON receives the standard bad_request envelope", async () => {
+    const requestId = "bad-json-request-id";
+    const response = await createApiApp().fetch(
+      new Request("https://api.test/api/v1/search_facilities", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-request-id": requestId,
+        },
+        body: "not-json",
+      }),
+      {},
+      {} as ExecutionContext,
+    );
+    const body = (await response.json()) as Record<string, any>;
+
+    expect(response.status).toBe(400);
+    expect(body).toMatchObject({
+      error: {
+        code: "bad_request",
+        message: "Malformed JSON body.",
+        details: { request_id: requestId },
+      },
+    });
+  });
+
+  it("Scenario: OpenAPI request validation receives the standard validation_failed envelope", async () => {
+    const requestId = "schema-validation-request-id";
+    const client = createHttpTestClient();
+
+    const response = await client.post(
+      "/api/v1/search_facilities",
+      { page: { type: "offset", limit: 0, offset: 0 } },
+      { "x-request-id": requestId },
+    );
+    const body = (await response.json()) as Record<string, any>;
+
+    expect(response.status).toBe(422);
+    expect(body).toMatchObject({
+      error: {
+        code: "validation_failed",
+        message: "Request validation failed.",
+        details: { request_id: requestId, issues: expect.any(Array) },
+      },
+    });
+  });
+
+  it("Scenario: Auth and family route body validation use the standard validation_failed envelope", async () => {
+    const client = createHttpTestClient();
+
+    const authResponse = await client.post("/api/v1/create_session", {
+      email: "not-an-email",
+      password: "",
+    });
+    const authBody = (await authResponse.json()) as Record<string, any>;
+    expect(authResponse.status).toBe(422);
+    expect(authBody).toMatchObject({
+      error: { code: "validation_failed", message: "Request validation failed." },
+    });
+
+    const familyResponse = await client.post("/api/v1/create_saved_facility", {});
+    const familyBody = (await familyResponse.json()) as Record<string, any>;
+    expect(familyResponse.status).toBe(422);
+    expect(familyBody).toMatchObject({
+      error: { code: "validation_failed", message: "Request validation failed." },
+    });
+  });
+
   it("Scenario: Unknown exceptions become safe internal errors", async () => {
     const app = createApiApp();
     const requestId = "test-request-id";

@@ -6,6 +6,7 @@ import { HomepageService } from "@/application/facilities/homepageService";
 import { ReferenceService } from "@/application/reference/referenceService";
 import type { Repositories } from "@/db/repositories/ports";
 import type { AppOpenAPI } from "@/interface/app";
+import { readJson } from "@/interface/http/requestValidation";
 import {
   ArticleIdentifierRequestSchema,
   ArticleSchema,
@@ -166,17 +167,6 @@ export function registerMarketplaceRoutes(app: AppOpenAPI) {
       return c.json(dataEnvelope(await services(c.get("repos")).articles.get(body.id)), 200);
     },
   );
-}
-
-async function readJson<T extends z.ZodTypeAny>(
-  c: Parameters<Parameters<AppOpenAPI["openapi"]>[1]>[0],
-  schema: T,
-): Promise<z.infer<T>> {
-  const parsed = schema.safeParse(await c.req.json());
-  if (!parsed.success) {
-    throw new Error("Request validation failed.");
-  }
-  return parsed.data;
 }
 
 function jsonBody(schema: z.ZodTypeAny) {

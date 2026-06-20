@@ -8,6 +8,7 @@ import { errorEnvelopeMiddleware } from "@/interface/middleware/errorEnvelope";
 import { enforceJsonPost } from "@/interface/middleware/enforceJsonPost";
 import { requestContextMiddleware } from "@/interface/middleware/requestContext";
 import { securityHeaders } from "@/interface/middleware/securityHeaders";
+import { validationHook } from "@/interface/http/requestValidation";
 import { openApiConfig } from "@/interface/openapi/registry";
 import { registerAuthRoutes } from "@/interface/routes/auth.route";
 import { registerHealthRoute } from "@/interface/routes/health.route";
@@ -28,7 +29,7 @@ function allowedOrigin(origin: string | undefined, configured: string | undefine
 }
 
 export function createApiApp() {
-  const app = new OpenAPIHono<AppBindings>();
+  const app = new OpenAPIHono<AppBindings>({ defaultHook: validationHook });
 
   app.use("*", securityHeaders);
   app.use("*", errorEnvelopeMiddleware);

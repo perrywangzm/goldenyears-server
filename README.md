@@ -132,7 +132,7 @@ Order is recommended. Each plan defines its own scope, BDD contract, non-goals, 
 - `Endpoint operation`: one `POST /api/v1/{verb_resource}` operation following copied `API_CONVENTIONS.md`.
 - `Envelope`: success `{ "data": ... }` or failure `{ "error": ... }`.
 - `UI-reflective`: the mockup informs product surfaces and visual behavior, but production logic lives in backend services and frontend viewmodels, never in presentational UI.
-- `Contract-backed frontend`: React Query and viewmodels consume generated OpenAPI operations. UI components never branch on backend envelopes or raw roles.
+- `Contract-backed frontend`: React Query and viewmodels consume `api.*` facade methods backed by generated OpenAPI contract types. UI components never branch on backend envelopes or raw roles.
 
 ## React Query Contract
 
@@ -164,7 +164,7 @@ The backend does not import React Query, but it is responsible for making React 
 
 - Plan first. Implement second.
 - Write failing tests for the BDD scenarios in the assigned plan before implementation.
-- Define public boundary types before internals when another module, OpenAPI client, frontend viewmodel, test, or agent will consume them.
+- Define public boundary types before internals when another module, OpenAPI contract type, frontend viewmodel, test, or agent will consume them.
 - Keep API interface, application, domain, DB integration, and platform adapter boundaries clean.
 - Stop at each plan's acceptance criteria. Do not silently expand scope.
 - Track implementation notes in sibling `NN-*.progress.md` files.

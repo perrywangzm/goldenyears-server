@@ -6,6 +6,7 @@
   "scripts": {
     "build": "wrangler deploy --dry-run --outdir=dist",
     "check:api": "tsx tools/contract-checks/checkApiConventions.ts",
+    "check:openapi": "pnpm openapi && git diff --exit-code openapi.json",
     "dev": "wrangler dev --env remote",
     "dev:remote": "wrangler dev --env remote",
     "dev:local": "wrangler dev --env local",

@@ -3,6 +3,7 @@ import type { Context } from "hono";
 import { SessionService } from "@/application/auth/sessionService";
 import type { AppBindings } from "@/config/env";
 import type { AppOpenAPI } from "@/interface/app";
+import { readJson } from "@/interface/http/requestValidation";
 import {
   dataEnvelope,
   dataEnvelopeSchema,
@@ -61,7 +62,7 @@ export function registerAuthRoutes(app: AppOpenAPI) {
   });
 
   app.post("/api/v1/create_session", async (c) => {
-    const parsed = CreateSessionRequestSchema.parse(await c.req.json());
+    const parsed = await readJson(c, CreateSessionRequestSchema);
     return c.json(
       dataEnvelope(await new SessionService(c.get("repos")).createSession(parsed, c)),
       200,

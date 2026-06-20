@@ -4,6 +4,7 @@ import { SavedFacilityService } from "@/application/saved/savedFacilityService";
 import { TourRequestService } from "@/application/tours/tourRequestService";
 import type { Repositories } from "@/db/repositories/ports";
 import type { AppOpenAPI } from "@/interface/app";
+import { readJson } from "@/interface/http/requestValidation";
 import {
   AccountDashboardSchema,
   CreateTourRequestSchema,
@@ -152,17 +153,6 @@ function emptyPage() {
 
 function zDeleteResponse() {
   return z.object({ id: z.string() });
-}
-
-async function readJson<T extends z.ZodTypeAny>(
-  c: Parameters<Parameters<AppOpenAPI["openapi"]>[1]>[0],
-  schema: T,
-): Promise<z.infer<T>> {
-  const parsed = schema.safeParse(await c.req.json());
-  if (!parsed.success) {
-    throw new Error("Request validation failed.");
-  }
-  return parsed.data;
 }
 
 function jsonBody(schema: z.ZodTypeAny) {

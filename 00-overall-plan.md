@@ -10,8 +10,9 @@ Build a Workers-native backend for Golden Years that can replace the mockup's lo
 flowchart LR
     UI["Presentational UI"] --> VM["Frontend viewmodel hooks"]
     VM --> Query["TanStack Query"]
-    Query --> Client["Generated OpenAPI client"]
-    Client --> API["Hono API interface"]
+    Query --> Facade["api.* facade"]
+    Facade --> Contracts["Generated OpenAPI contract types"]
+    Facade --> API["Hono API interface"]
     API --> Service["Application service"]
     Service --> Domain["Domain services"]
     Service --> Repo["Repositories"]
@@ -20,7 +21,7 @@ flowchart LR
     Outbox --> Queue["Queue/Cron workers"]
 ```
 
-The API is the hard boundary between UI-reflective surfaces and production logic. The frontend can adapt the mockup visually because all authoritative rules sit behind generated DTOs, viewmodels, and backend services.
+The API is the hard boundary between UI-reflective surfaces and production logic. The frontend can adapt the mockup visually because all authoritative rules sit behind backend DTOs, generated contract types, viewmodels, and backend services.
 
 ## Build Phases
 

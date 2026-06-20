@@ -48,7 +48,7 @@ Verb vocabulary (closed set):
 Rules:
 
 - snake_case only.
-- No nested resources in the path (`/facilities/123/reviews` ❌). Use a filter on the list endpoint instead (`list_reviews` with `facility_id` filter).
+- No nested resources in the path (`/facilities/123/reviews` ❌). Use a dedicated list operation instead (`list_facility_reviews` with the facility `id` in the body).
 - One endpoint = one operation. Never overload by inspecting the body shape.
 
 ---
@@ -372,10 +372,11 @@ Before merging a new endpoint, confirm:
 - [ ] If a list/search endpoint: accepts `filters`, `sort`, `page`, `fields`; declares supported pagination type(s); returns the §6.2 envelope.
 - [ ] If a mutation: documents create / patch / replace / delete semantics per §7.
 - [ ] All error responses use codes from §6.5 or add new ones to this doc.
+- [ ] Parsing/validation changes have focused tests for the affected status + `error.code` behavior.
 - [ ] No actor identity is read from the body.
 - [ ] If the endpoint is a read worth caching, it is registered in the cache allowlist per §13.
 - [ ] If the endpoint is a mutation, its invalidation tags are declared per §13.4.
-- [ ] OpenAPI / typed client is regenerated.
+- [ ] OpenAPI / typed client artifacts are refreshed from source schemas; generated files are not hand-edited.
 
 ---
 
@@ -566,4 +567,3 @@ Seed entries (update as endpoints land):
 | `/api/v1/search_facilities`    | tenant   | 60s  | 300s | `facility`                     |
 | `/api/v1/list_facilities`      | tenant   | 30s  | 120s | `facility`                     |
 | `/api/v1/get_facility`         | tenant   | 60s  | 300s | `facility:<id>` (fine tag)     |
-

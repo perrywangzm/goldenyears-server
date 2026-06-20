@@ -358,7 +358,8 @@
                   "available",
                   "limited",
                   "waitlist",
-                  "unavailable"
+                  "unavailable",
+                  "full"
                 ]
               },
               "beds_available": {

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TanStack Query is a frontend implementation detail, but the backend contract must be designed so the frontend can use it without leaking product logic into UI components. The generated client, query keys, cache invalidation, error mapping, and optimistic-update rules depend on backend consistency.
+TanStack Query is a frontend implementation detail, but the backend contract must be designed so the frontend can use it without leaking product logic into UI components. The `api.*` facade, generated contract types, query keys, cache invalidation, error mapping, and optimistic-update rules depend on backend consistency.
 
 ## Backend Responsibilities
 
@@ -14,7 +14,7 @@ Each OpenAPI operation uses the endpoint name as `operationId`.
 operationId: search_facilities
 ```
 
-This lets generated hooks/query functions, query key factories, logs, and BDD tests use the same name.
+This lets API facade methods, query key factories, logs, and BDD tests use the same name.
 
 ### Projection-Complete Responses
 
@@ -86,8 +86,8 @@ React Query mutations can retry safely only when the backend honors idempotency.
 ```mermaid
 flowchart LR
     Route["Route loader"] --> Prefetch["prefetchQuery"]
-    VM["useFeatureViewModel"] --> Query["generated query function"]
-    VM --> Mutation["generated mutation function"]
+    VM["useFeatureViewModel"] --> Query["query function backed by api.*"]
+    VM --> Mutation["mutation function backed by api.*"]
     Mutation --> Invalidator["central invalidation adapter"]
     Query --> API["OpenAPI operation"]
     API --> Envelope["data or ApiError"]
@@ -96,7 +96,7 @@ flowchart LR
 Frontend rules supported by the backend contract:
 
 - UI components receive viewmodel props and commands only.
-- Viewmodels call generated API/query functions.
+- Viewmodels call the API facade through query and mutation functions.
 - Query keys are generated or centralized, not hand-rolled in UI components.
 - Mutations invalidate or patch by backend-declared resource tags.
 - Optimistic updates are used only when rollback and `409 conflict` handling exist.

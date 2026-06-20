@@ -1,3 +1,4 @@
+import { HTTPException } from "hono/http-exception";
 import { errorStatusByCode, type StandardErrorCode } from "./errorCodes";
 
 export type ApiErrorCode = StandardErrorCode;
@@ -19,6 +20,14 @@ export class ApiError extends Error {
 export function normalizeError(error: unknown): ApiError {
   if (error instanceof ApiError) {
     return error;
+  }
+
+  if (error instanceof SyntaxError) {
+    return new ApiError("bad_request", "Malformed JSON body.", 400);
+  }
+
+  if (error instanceof HTTPException && error.status === 400 && error.message.includes("Malformed JSON")) {
+    return new ApiError("bad_request", "Malformed JSON body.", 400);
   }
 
   if (typeof error === "object" && error !== null && "code" in error) {
