@@ -1,12 +1,5 @@
-import type {
-  ArticleRow,
-  FacilityRow,
-  ReviewRow,
-  ReferenceItemRow,
-  SessionRow,
-  TourRequestRow,
-  UserRow,
-} from "@/db/schema/types";
+import type { ArticleRow, FacilityRow, ReviewRow, ReferenceItemRow, SessionRow, TourRequestRow, UserRow } from "@/db/schema/types";
+import type { AssessmentResultRow } from "@/db/schema/assessmentTypes";
 import { seedArticles, seedFacilities, seedReferenceItems, seedReviews, seedUsers } from "@/db/seeds/seedData";
 
 export interface SavedFacilityRecord {
@@ -59,6 +52,7 @@ export interface InMemoryStore {
   idempotencyKeys: IdempotencyRecord[];
   referenceItems: ReferenceItemRow[];
   articles: ArticleRow[];
+  assessmentResults: AssessmentResultRow[];
 }
 
 export function createSeededStore(): InMemoryStore {
@@ -74,6 +68,7 @@ export function createSeededStore(): InMemoryStore {
     idempotencyKeys: [],
     referenceItems: structuredClone(seedReferenceItems),
     articles: structuredClone(seedArticles),
+    assessmentResults: [],
   };
 }
 

@@ -1,4 +1,5 @@
 import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
+import type { AssessmentResultsTable } from "@/db/schema/assessmentTypes";
 
 export type Timestamp = ColumnType<Date, Date | string | undefined, Date | string>;
 
@@ -203,6 +204,7 @@ export interface Database {
   idempotency_keys: IdempotencyKeysTable;
   reference_items: ReferenceItemsTable;
   articles: ArticlesTable;
+  assessment_results: AssessmentResultsTable;
 }
 
 export type FacilityRow = Selectable<FacilitiesTable>;

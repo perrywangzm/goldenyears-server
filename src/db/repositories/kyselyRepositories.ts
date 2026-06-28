@@ -333,6 +333,80 @@ export class KyselyIdempotencyRepository implements IdempotencyRepositoryPort {
   }
 }
 
+export class KyselyAssessmentRepository {
+  constructor(private readonly db: DbExecutor) {}
+
+  async create(input: import("./assessmentRepository").CreateAssessmentResultInput) {
+    if (input.user_id) {
+      await this.db
+        .updateTable("assessment_results")
+        .set({ is_latest: false })
+        .where("user_id", "=", input.user_id)
+        .where("is_latest", "=", true)
+        .execute();
+    } else if (input.owner_session_id) {
+      await this.db
+        .updateTable("assessment_results")
+        .set({ is_latest: false })
+        .where("owner_session_id", "=", input.owner_session_id)
+        .where("user_id", "is", null)
+        .where("is_latest", "=", true)
+        .execute();
+    }
+
+    await this.db.insertInto("assessment_results").values(input as never).execute();
+    return this.findById(input.id) as Promise<import("@/db/schema/assessmentTypes").AssessmentResultRow>;
+  }
+
+  async findLatestForOwner(input: { user_id: string | null; owner_session_id: string | null }) {
+    let query = this.db.selectFrom("assessment_results").selectAll().where("is_latest", "=", true);
+    if (input.user_id) {
+      query = query.where("user_id", "=", input.user_id);
+    } else if (input.owner_session_id) {
+      query = query.where("user_id", "is", null).where("owner_session_id", "=", input.owner_session_id);
+    } else {
+      return undefined;
+    }
+    return query.executeTakeFirst();
+  }
+
+  async findById(id: string) {
+    return this.db.selectFrom("assessment_results").selectAll().where("id", "=", id).executeTakeFirst();
+  }
+
+  async deleteLatestForOwner(input: import("./assessmentRepository").AssessmentOwnerScope) {
+    const row = await this.findLatestForOwner(input);
+    if (!row) return null;
+    await this.db.updateTable("assessment_results").set({ is_latest: false }).where("id", "=", row.id).execute();
+    return { id: row.id };
+  }
+
+  async claimAnonymousSession(anonymousSessionId: string, userId: string, sessionId: string | null) {
+    const row = await this.db
+      .selectFrom("assessment_results")
+      .selectAll()
+      .where("is_latest", "=", true)
+      .where("user_id", "is", null)
+      .where("owner_session_id", "=", anonymousSessionId)
+      .executeTakeFirst();
+    if (!row) return false;
+
+    await this.db
+      .updateTable("assessment_results")
+      .set({ is_latest: false })
+      .where("user_id", "=", userId)
+      .where("is_latest", "=", true)
+      .execute();
+
+    await this.db
+      .updateTable("assessment_results")
+      .set({ user_id: userId, owner_session_id: sessionId, is_latest: true })
+      .where("id", "=", row.id)
+      .execute();
+    return true;
+  }
+}
+
 const emptyArticleRepository = {
   async listPublished(limit: number, offset: number) {
     return { rows: [], total: 0, hasMore: false as boolean };
@@ -355,5 +429,6 @@ export function createKyselyRepositories(db: DbExecutor): Repositories {
     tours: new KyselyTourRepository(db),
     users: new KyselyUserRepository(db),
     articles: emptyArticleRepository,
+    assessments: new KyselyAssessmentRepository(db),
   };
 }

@@ -1,4 +1,5 @@
 import { getInMemoryStore, type InMemoryStore } from "./inMemoryStore";
+import { AssessmentRepository } from "./assessmentRepository";
 import { ArticleRepository } from "./articleRepository";
 import { AuditRepository } from "./auditRepository";
 import { FacilityRepository } from "./facilityRepository";
@@ -29,6 +30,7 @@ export function createRepositories(store: InMemoryStore = getInMemoryStore()) {
     sessions: new SessionRepository(store),
     tours: new TourRepository(store),
     users: new UserRepository(store),
+    assessments: new AssessmentRepository(store),
     store,
   };
 }

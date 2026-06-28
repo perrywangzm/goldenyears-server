@@ -1,4 +1,5 @@
 import { getInMemoryStore, type InMemoryStore } from "./inMemoryStore";
+import { AssessmentRepository } from "./assessmentRepository";
 import { ArticleRepository } from "./articleRepository";
 import { AuditRepository } from "./auditRepository";
 import { FacilityRepository } from "./facilityRepository";
@@ -25,6 +26,7 @@ function wrapSyncRepositories(store: InMemoryStore): Repositories {
   const savedFacilities = new SavedFacilityRepository(store);
   const tours = new TourRepository(store);
   const articles = new ArticleRepository(store);
+  const assessments = new AssessmentRepository(store);
   const audit = new AuditRepository(store);
   const outbox = new OutboxRepository(store);
   const idempotency = new IdempotencyRepository(store);
@@ -67,6 +69,14 @@ function wrapSyncRepositories(store: InMemoryStore): Repositories {
     articles: {
       listPublished: (limit, offset) => promisify(articles.listPublished(limit, offset)),
       getPublished: (idOrSlug) => promisify(articles.getPublished(idOrSlug)),
+    },
+    assessments: {
+      create: (input) => promisify(assessments.create(input)),
+      findLatestForOwner: (input) => promisify(assessments.findLatestForOwner(input)),
+      findById: (id) => promisify(assessments.findById(id)),
+      deleteLatestForOwner: (input) => promisify(assessments.deleteLatestForOwner(input)),
+      claimAnonymousSession: (anonymousSessionId, userId, sessionId) =>
+        promisify(assessments.claimAnonymousSession(anonymousSessionId, userId, sessionId)),
     },
     audit: {
       write: (event) => promisify(audit.write(event)),

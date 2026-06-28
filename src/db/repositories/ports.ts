@@ -1,4 +1,5 @@
 import type { IdempotencyRecord } from "@/db/repositories/inMemoryStore";
+import type { AssessmentResultRow } from "@/db/schema/assessmentTypes";
 import type {
   ArticleRow,
   FacilityRow,
@@ -9,6 +10,7 @@ import type {
   UserRow,
 } from "@/db/schema/types";
 import type { ActorRole } from "@/shared/request-context/context";
+import type { CreateAssessmentResultInput, AssessmentOwnerScope } from "./assessmentRepository";
 import type { FacilitySearchInput } from "./facilityRepository";
 
 export interface SavedFacilityRecord {
@@ -102,6 +104,14 @@ export interface OutboxRepositoryPort {
   write(event: OutboxRecord): Promise<OutboxRecord>;
 }
 
+export interface AssessmentRepositoryPort {
+  create(input: CreateAssessmentResultInput): Promise<AssessmentResultRow>;
+  findLatestForOwner(input: AssessmentOwnerScope): Promise<AssessmentResultRow | undefined>;
+  findById(id: string): Promise<AssessmentResultRow | undefined>;
+  deleteLatestForOwner(input: AssessmentOwnerScope): Promise<{ id: string } | null>;
+  claimAnonymousSession(anonymousSessionId: string, userId: string, sessionId: string | null): Promise<boolean>;
+}
+
 export interface IdempotencyRepositoryPort {
   find(key: string, userId: string | null, now?: Date): Promise<IdempotencyRecord | undefined>;
   create(record: IdempotencyRecord): Promise<IdempotencyRecord>;
@@ -116,6 +126,7 @@ export interface Repositories {
   savedFacilities: SavedFacilityRepositoryPort;
   tours: TourRepositoryPort;
   articles: ArticleRepositoryPort;
+  assessments: AssessmentRepositoryPort;
   audit: AuditRepositoryPort;
   outbox: OutboxRepositoryPort;
   idempotency: IdempotencyRepositoryPort;

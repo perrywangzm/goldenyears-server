@@ -26,6 +26,8 @@ describe("Feature: Database migrations", () => {
       expect(tables.has(table), `${table} table`).toBe(true);
     }
 
+    expect(sql).toMatch(/create table assessment_results/i);
+
     expect(sql).toMatch(/facilities[\s\S]*version integer not null default 1/i);
     expect(sql).toMatch(/listing_submissions[\s\S]*status listing_submission_status not null/i);
     expect(sql).toMatch(/listing_submissions[\s\S]*version integer not null default 1/i);
