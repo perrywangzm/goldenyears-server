@@ -106,9 +106,10 @@ create_cms_article_unpublication
 ## Decision Tools
 
 ```text
-get_compare_summary
+get_assessment_schema
 create_assessment_result
 get_latest_assessment_result
+delete_latest_assessment_result
 list_assessment_matches
 create_cost_estimate
 get_cost_calculator_policy

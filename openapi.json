@@ -1743,12 +1743,507 @@
                 "preferred_time"
               ]
             }
+          },
+          "latest_assessment": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "recommended_care_type": {
+                "type": "string"
+              },
+              "care_type_name": {
+                "type": "string"
+              },
+              "completed_at": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "recommended_care_type",
+              "care_type_name",
+              "completed_at"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
           "counts",
-          "recent_tour_requests"
+          "recent_tour_requests",
+          "latest_assessment"
         ],
+        "additionalProperties": false
+      },
+      "GetAssessmentSchemaResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AssessmentSchema"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "AssessmentSchema": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "estimated_minutes": {
+            "type": "integer"
+          },
+          "disclaimer": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "non_diagnostic"
+                ]
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "text"
+            ]
+          },
+          "care_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssessmentCareTypeInfo"
+            }
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssessmentSchemaQuestion"
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "title",
+          "estimated_minutes",
+          "disclaimer",
+          "care_types",
+          "questions"
+        ],
+        "additionalProperties": false
+      },
+      "AssessmentCareTypeInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "blurb": {
+            "type": "string"
+          },
+          "next": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "blurb",
+          "next"
+        ],
+        "additionalProperties": false
+      },
+      "AssessmentSchemaQuestion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "sub": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "skip_if": {
+            "$ref": "#/components/schemas/AssessmentSkipIf"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssessmentSchemaOption"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "sub",
+          "required",
+          "skip_if",
+          "options"
+        ],
+        "additionalProperties": false
+      },
+      "AssessmentSkipIf": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string"
+          },
+          "equals": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "question_id",
+          "equals"
+        ],
+        "additionalProperties": false
+      },
+      "AssessmentSchemaOption": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "emoji": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "emoji"
+        ],
+        "additionalProperties": false
+      },
+      "GetAssessmentSchemaRequest": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAssessmentResultResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AssessmentResult"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "AssessmentResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          },
+          "answers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "recommended_care_type": {
+            "type": "string"
+          },
+          "scores": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "decided_by": {
+            "type": "string",
+            "enum": [
+              "override",
+              "score"
+            ]
+          },
+          "profile": {
+            "$ref": "#/components/schemas/AssessmentProfile"
+          },
+          "because": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "care_type": {
+            "$ref": "#/components/schemas/AssessmentCareTypeInfo"
+          },
+          "completed_at": {
+            "type": "string"
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssessmentMatch"
+            }
+          },
+          "view_all_search": {
+            "$ref": "#/components/schemas/AssessmentViewAllSearch"
+          }
+        },
+        "required": [
+          "id",
+          "schema_version",
+          "answers",
+          "recommended_care_type",
+          "scores",
+          "decided_by",
+          "profile",
+          "because",
+          "care_type",
+          "completed_at",
+          "matches",
+          "view_all_search"
+        ],
+        "additionalProperties": false
+      },
+      "AssessmentProfile": {
+        "type": "object",
+        "properties": {
+          "must_have": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nice_to_have": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "must_have",
+          "nice_to_have",
+          "tags"
+        ],
+        "additionalProperties": false
+      },
+      "AssessmentMatch": {
+        "type": "object",
+        "properties": {
+          "facility": {
+            "$ref": "#/components/schemas/FacilityCard"
+          },
+          "score": {
+            "type": "number"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssessmentMatchReason"
+            }
+          }
+        },
+        "required": [
+          "facility",
+          "score",
+          "reasons"
+        ],
+        "additionalProperties": false
+      },
+      "AssessmentMatchReason": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "must",
+              "nice",
+              "missing"
+            ]
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "label"
+        ],
+        "additionalProperties": false
+      },
+      "AssessmentViewAllSearch": {
+        "type": "object",
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/FilterDsl"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Sort"
+            }
+          },
+          "page": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "offset"
+                ]
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "offset": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "type",
+              "limit",
+              "offset"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAssessmentResultRequest": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "type": "string"
+          },
+          "answers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "schema_version",
+          "answers"
+        ],
+        "additionalProperties": false
+      },
+      "GetLatestAssessmentResultResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AssessmentResult"
+              },
+              {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "GetLatestAssessmentResultRequest": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "ListAssessmentMatchesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ListAssessmentMatchesResponse"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "ListAssessmentMatchesRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "DeleteLatestAssessmentResultResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DeleteLatestAssessmentResultData"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "DeleteLatestAssessmentResultData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "DeleteLatestAssessmentResultRequest": {
+        "type": "object",
+        "properties": {},
         "additionalProperties": false
       }
     },
@@ -2757,6 +3252,412 @@
           },
           "403": {
             "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/get_assessment_schema": {
+      "post": {
+        "operationId": "get_assessment_schema",
+        "tags": [
+          "assessment"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAssessmentSchemaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAssessmentSchemaResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/create_assessment_result": {
+      "post": {
+        "operationId": "create_assessment_result",
+        "tags": [
+          "assessment"
+        ],
+        "x-goldenyears-invalidates": [
+          "assessment"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAssessmentResultRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAssessmentResultResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/get_latest_assessment_result": {
+      "post": {
+        "operationId": "get_latest_assessment_result",
+        "tags": [
+          "assessment"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetLatestAssessmentResultRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLatestAssessmentResultResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/list_assessment_matches": {
+      "post": {
+        "operationId": "list_assessment_matches",
+        "tags": [
+          "assessment"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListAssessmentMatchesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListAssessmentMatchesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/delete_latest_assessment_result": {
+      "post": {
+        "operationId": "delete_latest_assessment_result",
+        "tags": [
+          "assessment"
+        ],
+        "x-goldenyears-invalidates": [
+          "assessment"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteLatestAssessmentResultRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteLatestAssessmentResultResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
             "content": {
               "application/json": {
                 "schema": {

@@ -27,4 +27,5 @@ Implemented for the Family MVP subset only.
 - No review submission.
 - No notification inbox workflow.
 - No provider manager transitions.
-- No email delivery, queue consumers, shortlists, assessment, or cost calculator persistence.
+- No email delivery, queue consumers, shortlists, or cost calculator persistence.
+- Account dashboard assessment card UI is a follow-up; backend `latest_assessment` summary is available on `get_account_dashboard`.

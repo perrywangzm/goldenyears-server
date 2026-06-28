@@ -1,4 +1,5 @@
 import type { Repositories } from "@/db/repositories/ports";
+import { AssessmentService } from "@/application/assessment/assessmentService";
 import { requireFamilyUser } from "@/shared/authz/policies";
 import type { RequestContext } from "@/shared/request-context/context";
 
@@ -7,9 +8,10 @@ export class AccountDashboardService {
 
   async getDashboard(ctx: RequestContext) {
     const userId = requireFamilyUser(ctx);
-    const [saved, tours] = await Promise.all([
+    const [saved, tours, latestAssessment] = await Promise.all([
       this.repos.savedFacilities.listForUser(userId),
       this.repos.tours.listForUser(userId),
+      new AssessmentService(this.repos).getLatestSummaryForUser(userId),
     ]);
     return {
       counts: {
@@ -25,6 +27,7 @@ export class AccountDashboardService {
         preferred_date: tour.preferred_date,
         preferred_time: tour.preferred_time,
       })),
+      latest_assessment: latestAssessment,
     };
   }
 }

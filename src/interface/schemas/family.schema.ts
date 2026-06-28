@@ -63,6 +63,15 @@ export const AccountDashboardSchema = z
         preferred_time: z.string(),
       }),
     ),
+    latest_assessment: z
+      .object({
+        id: z.string(),
+        recommended_care_type: z.string(),
+        care_type_name: z.string(),
+        completed_at: z.string(),
+      })
+      .strict()
+      .nullable(),
   })
   .strict()
   .openapi("AccountDashboard");

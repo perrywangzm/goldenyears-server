@@ -2,6 +2,7 @@ import { deleteCookie, setCookie } from "hono/cookie";
 import type { Context } from "hono";
 import type { AppBindings } from "@/config/env";
 import type { Repositories } from "@/db/repositories/ports";
+import { AssessmentService, readAssessmentSessionCookie } from "@/application/assessment/assessmentService";
 import { verifyPassword, sha256 } from "@/platform/crypto/passwordService";
 import { ApiError } from "@/shared/errors/apiError";
 import type { RequestContext } from "@/shared/request-context/context";
@@ -25,6 +26,11 @@ export class SessionService {
       created_at: new Date(),
       revoked_at: null,
     });
+
+    const assessmentSessionId = readAssessmentSessionCookie(c.req.header("cookie"));
+    if (assessmentSessionId) {
+      await new AssessmentService(this.repos).claimAnonymousSession(user.id, session.id, assessmentSessionId);
+    }
 
     setCookie(c, c.env?.SESSION_COOKIE_NAME ?? "gy_session", token, {
       httpOnly: true,

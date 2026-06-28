@@ -10,6 +10,7 @@ import { requestContextMiddleware } from "@/interface/middleware/requestContext"
 import { securityHeaders } from "@/interface/middleware/securityHeaders";
 import { validationHook } from "@/interface/http/requestValidation";
 import { openApiConfig } from "@/interface/openapi/registry";
+import { registerAssessmentRoutes } from "@/interface/routes/assessment.route";
 import { registerAuthRoutes } from "@/interface/routes/auth.route";
 import { registerHealthRoute } from "@/interface/routes/health.route";
 import { registerFamilyRoutes } from "@/interface/routes/family.route";
@@ -56,6 +57,7 @@ export function createApiApp() {
   registerMeRoute(app);
   registerMarketplaceRoutes(app);
   registerFamilyRoutes(app);
+  registerAssessmentRoutes(app);
 
   app.notFound((c) =>
     c.json(

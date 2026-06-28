@@ -8,6 +8,7 @@ const sensitiveKeys = new Set([
   "carenotes",
   "assessment_answers",
   "assessmentanswers",
+  "answers",
   "income",
   "income_inputs",
   "incomeinputs",
