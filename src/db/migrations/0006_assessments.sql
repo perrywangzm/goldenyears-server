@@ -1,4 +1,4 @@
-CREATE TABLE assessment_results (
+CREATE TABLE IF NOT EXISTS assessment_results (
   id TEXT PRIMARY KEY,
   schema_version TEXT NOT NULL,
   user_id TEXT NULL REFERENCES users (id) ON DELETE CASCADE,
@@ -14,10 +14,10 @@ CREATE TABLE assessment_results (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX assessment_results_user_latest_idx
+CREATE INDEX IF NOT EXISTS assessment_results_user_latest_idx
   ON assessment_results (user_id, is_latest)
   WHERE user_id IS NOT NULL AND is_latest = TRUE;
 
-CREATE INDEX assessment_results_owner_session_latest_idx
+CREATE INDEX IF NOT EXISTS assessment_results_owner_session_latest_idx
   ON assessment_results (owner_session_id, is_latest)
   WHERE user_id IS NULL AND owner_session_id IS NOT NULL AND is_latest = TRUE;

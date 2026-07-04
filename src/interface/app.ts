@@ -11,13 +11,16 @@ import { securityHeaders } from "@/interface/middleware/securityHeaders";
 import { validationHook } from "@/interface/http/requestValidation";
 import { openApiConfig } from "@/interface/openapi/registry";
 import { registerAssessmentRoutes } from "@/interface/routes/assessment.route";
+import { registerAdminRoutes } from "@/interface/routes/admin.route";
 import { registerAuthRoutes } from "@/interface/routes/auth.route";
 import { registerHealthRoute } from "@/interface/routes/health.route";
-import { registerFamilyRoutes } from "@/interface/routes/family.route";
+import { registerUserRoutes } from "@/interface/routes/user.route";
 import { registerMarketplaceRoutes } from "@/interface/routes/marketplace.route";
 import { registerMeRoute } from "@/interface/routes/me.route";
+import { registerPartnerRoutes } from "@/interface/routes/partner.route";
 import { errorEnvelope } from "@/shared/envelopes/envelope";
 import { normalizeError } from "@/shared/errors/apiError";
+import type { SupabaseAuthPort } from "@/platform/auth/supabaseAuthPort";
 
 export type AppOpenAPI = OpenAPIHono<AppBindings>;
 
@@ -29,8 +32,15 @@ function allowedOrigin(origin: string | undefined, configured: string | undefine
   return origins.includes(origin) ? origin : null;
 }
 
-export function createApiApp() {
+export function createApiApp(options: { supabaseAuth?: SupabaseAuthPort } = {}) {
   const app = new OpenAPIHono<AppBindings>({ defaultHook: validationHook });
+
+  if (options.supabaseAuth) {
+    app.use("*", async (c, next) => {
+      c.set("supabaseAuth", options.supabaseAuth);
+      await next();
+    });
+  }
 
   app.use("*", securityHeaders);
   app.use("*", errorEnvelopeMiddleware);
@@ -40,7 +50,7 @@ export function createApiApp() {
     "*",
     cors({
       origin: (origin, c) => allowedOrigin(origin, c.env?.CORS_ORIGIN) ?? "http://localhost:3000",
-      allowHeaders: ["Content-Type", "Idempotency-Key", "X-Request-Id", "X-Api-Access-Key"],
+      allowHeaders: ["Content-Type", "Idempotency-Key", "X-Request-Id", "X-Api-Access-Key", "X-CSRF-Token"],
       allowMethods: ["POST", "OPTIONS"],
       credentials: true,
     }),
@@ -55,8 +65,10 @@ export function createApiApp() {
   registerHealthRoute(app);
   registerAuthRoutes(app);
   registerMeRoute(app);
+  registerPartnerRoutes(app);
+  registerAdminRoutes(app);
   registerMarketplaceRoutes(app);
-  registerFamilyRoutes(app);
+  registerUserRoutes(app);
   registerAssessmentRoutes(app);
 
   app.notFound((c) =>

@@ -8,11 +8,13 @@ This map converts mockup and requirement intent into `API_CONVENTIONS.md` operat
 get_health
 get_me
 create_user
-create_session
-delete_session
-create_email_verification
-create_password_reset
-update_password
+user/auth/login
+user/auth/logout
+user/auth/signup
+user/auth/confirm_verification
+user/auth/request_password_reset
+user/auth/confirm_password_reset
+user/auth/resend_verification
 ```
 
 ## Reference Data

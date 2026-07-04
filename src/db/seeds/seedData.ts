@@ -1,16 +1,74 @@
-import type { ArticleRow, FacilityRow, ReferenceItemRow, ReviewRow, UserRow } from "@/db/schema/types";
+import type {
+  ArticleRow,
+  CompanyRow,
+  CompanyUserRow,
+  FacilityRow,
+  ReferenceItemRow,
+  ReviewRow,
+  UserRoleRow,
+  UserRow,
+} from "@/db/schema/types";
 
 const now = new Date("2026-05-18T00:00:00.000Z");
 
 export const seedUsers: UserRow[] = [
   {
     id: "usr_family_demo",
+    auth_user_id: "a1000000-0000-4000-8000-000000000001",
     email: "family@example.com",
     display_name: "Family Demo",
     password_hash: "sha256:5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
     status: "active",
     created_at: now,
     updated_at: now,
+  },
+  {
+    id: "usr_partner_operator",
+    auth_user_id: "a1000000-0000-4000-8000-000000000002",
+    email: "partner@example.com",
+    display_name: "Partner Operator",
+    password_hash: "sha256:5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+    status: "active",
+    created_at: now,
+    updated_at: now,
+  },
+  {
+    id: "usr_admin_demo",
+    auth_user_id: "a1000000-0000-4000-8000-000000000003",
+    email: "admin@example.com",
+    display_name: "Admin Demo",
+    password_hash: "sha256:5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+    status: "active",
+    created_at: now,
+    updated_at: now,
+  },
+];
+
+export const seedCompanies: CompanyRow[] = [
+  {
+    id: "co_partner_demo",
+    name: "Golden Care Partners",
+    status: "active",
+    created_at: now,
+    updated_at: now,
+  },
+];
+
+export const seedCompanyUsers: CompanyUserRow[] = [
+  {
+    company_id: "co_partner_demo",
+    user_id: "usr_partner_operator",
+    status: "active",
+    created_at: now,
+    updated_at: now,
+  },
+];
+
+export const seedUserRoles: UserRoleRow[] = [
+  {
+    user_id: "usr_admin_demo",
+    role_id: "admin",
+    created_at: now,
   },
 ];
 
@@ -65,6 +123,7 @@ export const seedReferenceItems: ReferenceItemRow[] = [
 export const seedFacilities: FacilityRow[] = [
   {
     id: "fac_orchid_gardens",
+    company_id: null,
     slug: "orchid-gardens",
     name: "Orchid Gardens Retirement Living",
     tagline: "Resort-style independent living in the heart of Bukit Timah.",
@@ -108,6 +167,7 @@ export const seedFacilities: FacilityRow[] = [
   },
   {
     id: "fac_serene_heights",
+    company_id: null,
     slug: "serene-heights",
     name: "Serene Heights Assisted Care",
     tagline: "Warm, family-style assisted living in Toa Payoh.",
@@ -147,6 +207,7 @@ export const seedFacilities: FacilityRow[] = [
   },
   {
     id: "fac_bayshore_nursing",
+    company_id: null,
     slug: "bayshore-nursing",
     name: "Bayshore Nursing Home",
     tagline: "Skilled nursing care with sea views in Pasir Ris.",
@@ -186,6 +247,7 @@ export const seedFacilities: FacilityRow[] = [
   },
   {
     id: "fac_hidden_draft",
+    company_id: null,
     slug: "hidden-draft",
     name: "Hidden Draft Home",
     tagline: "This record must not appear publicly.",
@@ -222,6 +284,21 @@ export const seedFacilities: FacilityRow[] = [
     version: 1,
     created_at: now,
     updated_at: now,
+  },
+];
+
+export const seedPartnerFacilities: FacilityRow[] = [
+  {
+    ...seedFacilities[0],
+    id: "fac_partner_managed",
+    company_id: "co_partner_demo",
+    slug: "partner-managed-home",
+    name: "Partner Managed Home",
+    status: "draft",
+    is_enabled: false,
+    provider_contact_email: "operator@example.com",
+    admin_notes: null,
+    moderation_state: "draft",
   },
 ];
 

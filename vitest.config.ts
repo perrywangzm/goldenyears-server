@@ -8,7 +8,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["src/**/*.test.ts", "../shared/edge-access/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "tools/**/*.test.ts", "../shared/edge-access/**/*.test.ts"],
     fileParallelism: false,
   },
 });

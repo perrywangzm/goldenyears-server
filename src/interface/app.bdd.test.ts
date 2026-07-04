@@ -80,6 +80,55 @@ describe("Feature: API transport conventions", () => {
     expect(response.headers.get("X-Request-Id")).toEqual(expect.any(String));
   });
 
+  it("Scenario: Canonical surface routes are available alongside flat compatibility aliases", async () => {
+    const client = createHttpTestClient();
+    const canonical = await client.post("/api/v1/public/get_health", {});
+    const compatibility = await client.post("/api/v1/get_health", {});
+
+    expect(canonical.status).toBe(200);
+    expect(compatibility.status).toBe(200);
+  });
+
+  it("Scenario: Legacy flat auth routes remain temporary compatibility aliases", async () => {
+    const client = createHttpTestClient();
+    const login = await client.post("/api/v1/create_session", {
+      email: "family@example.com",
+      password: "password",
+    });
+    const setCookie = login.headers.get("set-cookie") ?? "";
+    const session = setCookie.match(/gy_user_session=([^;]+)/)?.[1] ?? "";
+    const csrf = setCookie.match(/gy_user_session_csrf=([^;]+)/)?.[1] ?? "";
+    const logout = await client.post(
+      "/api/v1/delete_session",
+      {},
+      {
+        cookie: `gy_user_session=${session}; gy_user_session_csrf=${csrf}`,
+        "x-csrf-token": csrf,
+      },
+    );
+
+    expect(login.status).toBe(200);
+    expect(logout.status).toBe(200);
+  });
+
+  it("Scenario: CORS preflight permits the CSRF request header", async () => {
+    const response = await createApiApp().fetch(
+      new Request("https://api.test/api/v1/partner/auth/logout", {
+        method: "OPTIONS",
+        headers: {
+          origin: "http://localhost:5173",
+          "access-control-request-method": "POST",
+          "access-control-request-headers": "x-csrf-token,content-type",
+        },
+      }),
+      { CORS_ORIGIN: "http://localhost:5173" },
+      {} as ExecutionContext,
+    );
+
+    expect(response.status).toBe(204);
+    expect(response.headers.get("access-control-allow-headers")?.toLowerCase()).toContain("x-csrf-token");
+  });
+
   it("Scenario: Non-POST requests are rejected consistently", async () => {
     const client = createHttpTestClient();
 
@@ -145,10 +194,10 @@ describe("Feature: Error normalization", () => {
     });
   });
 
-  it("Scenario: Auth and family route body validation use the standard validation_failed envelope", async () => {
+  it("Scenario: Auth and user route body validation use the standard validation_failed envelope", async () => {
     const client = createHttpTestClient();
 
-    const authResponse = await client.post("/api/v1/create_session", {
+    const authResponse = await client.post("/api/v1/user/auth/login", {
       email: "not-an-email",
       password: "",
     });

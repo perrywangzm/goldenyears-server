@@ -129,7 +129,7 @@ Order is recommended. Each plan defines its own scope, BDD contract, non-goals, 
 - `DB integration layer`: Kysely repositories, SQL migrations, projections, and seed importers. It owns SQL details and row mapping.
 - `Platform adapter`: R2, email, queue, geocoding, cache, rate limit, clock, ID generation, and environment access behind narrow ports.
 - `Projection`: read-optimized shape used by APIs and React Query, such as facility cards, map markers, inbox rows, and admin queues.
-- `Endpoint operation`: one `POST /api/v1/{verb_resource}` operation following copied `API_CONVENTIONS.md`.
+- `Endpoint operation`: one canonical `POST /api/v1/{surface}/{verb_resource}` operation (or the defined `{surface}/auth/{login|logout}` exception) following copied `API_CONVENTIONS.md`.
 - `Envelope`: success `{ "data": ... }` or failure `{ "error": ... }`.
 - `UI-reflective`: the mockup informs product surfaces and visual behavior, but production logic lives in backend services and frontend viewmodels, never in presentational UI.
 - `Contract-backed frontend`: React Query and viewmodels consume `api.*` facade methods backed by generated OpenAPI contract types. UI components never branch on backend envelopes or raw roles.
@@ -138,7 +138,7 @@ Order is recommended. Each plan defines its own scope, BDD contract, non-goals, 
 
 The backend does not import React Query, but it is responsible for making React Query safe and boring to use:
 
-- Every endpoint has a stable OpenAPI `operationId` matching the endpoint name, such as `search_facilities` or `create_tour_request`.
+- Every canonical endpoint has a stable surface-prefixed OpenAPI `operationId`, such as `public_search_facilities` or `user_create_tour_request`.
 - Read endpoints return projection-complete DTOs so the frontend avoids per-card waterfalls.
 - List/search endpoints support the standard body shape: `filters`, `sort`, `page`, and `fields`.
 - Errors use stable snake_case codes that viewmodels can map to loading, empty, unauthorized, forbidden, conflict, rate-limited, and generic error states.

@@ -1,5 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { SessionService } from "@/application/auth/sessionService";
+import { createAuthServices } from "@/application/auth/createAuthServices";
+import type { AppBindings } from "@/config/env";
 import type { AppOpenAPI } from "@/interface/app";
 import {
   dataEnvelope,
@@ -7,6 +8,7 @@ import {
   EmptyJsonBodySchema,
   ErrorEnvelopeSchema,
 } from "@/shared/envelopes/envelope";
+import { requireSessionAudience } from "@/shared/authz/policies";
 
 const ActorSchema = z
   .object({
@@ -31,11 +33,9 @@ const CurrentContextSchema = z
   })
   .openapi("CurrentContextData");
 
-const route = createRoute({
-  method: "post",
-  path: "/api/v1/get_me",
-  operationId: "get_me",
-  tags: ["current_context"],
+const routeConfig = {
+  method: "post" as const,
+  tags: ["user"],
   request: {
     body: {
       required: true,
@@ -64,15 +64,25 @@ const route = createRoute({
       },
     },
   },
-});
+};
 
 export function registerMeRoute(app: AppOpenAPI) {
-  app.openapi(route, async (c) => {
+  const handler = async (c: Parameters<Parameters<AppOpenAPI["openapi"]>[1]>[0], requireUser: boolean) => {
     const actor = c.get("actor");
-    const service = new SessionService(c.get("repos"));
+    const context = { requestId: c.get("requestId"), actor, now: new Date() };
+    if (requireUser) requireSessionAudience(context, "user");
+    const service = createAuthServices(c.env, c.get("repos"), c.get("supabaseAuth")).sessions;
     return c.json(
-      dataEnvelope(await service.getMe({ requestId: c.get("requestId"), actor, now: new Date() })),
+      dataEnvelope(await service.getMe(context)),
       200,
     );
-  });
+  };
+  app.openapi(
+    createRoute({ ...routeConfig, path: "/api/v1/user/get_me", operationId: "user_get_me" }),
+    async (c) => handler(c, true),
+  );
+  app.openapi(
+    createRoute({ ...routeConfig, path: "/api/v1/get_me", operationId: "get_me" }),
+    async (c) => handler(c, false),
+  );
 }

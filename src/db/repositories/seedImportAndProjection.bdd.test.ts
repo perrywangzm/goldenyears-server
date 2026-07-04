@@ -67,6 +67,7 @@ describe("Feature: Mockup seed import", () => {
     expect(imported.facilities).toHaveLength(1);
     expect(imported.facilities[0]).toMatchObject({
       id: "fac_orchid_gardens",
+      company_id: null,
       slug: "orchid-gardens",
       status: "approved",
       is_enabled: true,

@@ -2,6 +2,8 @@ import type { IdempotencyRecord } from "@/db/repositories/inMemoryStore";
 import type { AssessmentResultRow } from "@/db/schema/assessmentTypes";
 import type {
   ArticleRow,
+  CompanyRow,
+  CompanyUserRow,
   FacilityRow,
   ReferenceItemRow,
   ReviewRow,
@@ -10,6 +12,7 @@ import type {
   UserRow,
 } from "@/db/schema/types";
 import type { ActorRole } from "@/shared/request-context/context";
+import type { SessionAudience } from "@/shared/authz/sessionAudience";
 import type { CreateAssessmentResultInput, AssessmentOwnerScope } from "./assessmentRepository";
 import type { FacilitySearchInput } from "./facilityRepository";
 
@@ -69,13 +72,45 @@ export interface ReferenceRepositoryPort {
 export interface UserRepositoryPort {
   findByEmail(email: string): Promise<UserRow | undefined>;
   findById(id: string): Promise<UserRow | undefined>;
+  findByAuthUserId(authUserId: string): Promise<UserRow | undefined>;
+  linkAuthUserId(
+    userId: string,
+    authUserId: string,
+    patch?: { display_name?: string },
+  ): Promise<UserRow>;
+  createFromAuthIdentity(input: {
+    auth_user_id: string;
+    email: string;
+    display_name: string;
+    status: UserRow["status"];
+  }): Promise<UserRow>;
+  updateProfile(userId: string, patch: { display_name?: string }): Promise<UserRow>;
   rolesForUser(userId: string): Promise<ActorRole[]>;
 }
 
 export interface SessionRepositoryPort {
   create(session: SessionRow): Promise<SessionRow>;
-  findActiveByTokenHash(tokenHash: string, now?: Date): Promise<SessionRow | undefined>;
+  findActiveByTokenHash(tokenHash: string, audience: SessionAudience, now?: Date): Promise<SessionRow | undefined>;
   revoke(sessionId: string, now?: Date): Promise<void>;
+}
+
+export interface CompanyRepositoryPort {
+  findById(id: string): Promise<CompanyRow | undefined>;
+  listActiveForUser(userId: string): Promise<CompanyRow[]>;
+}
+
+export interface CompanyUserRepositoryPort {
+  listActiveForUser(userId: string): Promise<CompanyUserRow[]>;
+  findActiveMembership(userId: string, companyId: string): Promise<CompanyUserRow | undefined>;
+  countActiveCompanies(userId: string): Promise<number>;
+}
+
+export interface PartnerFacilityRepositoryPort {
+  listAccessibleForUser(
+    userId: string,
+    input: { limit: number; offset: number },
+  ): Promise<{ rows: FacilityRow[]; total: number; hasMore: boolean }>;
+  findAccessibleForUserAndFacility(userId: string, facilityId: string): Promise<FacilityRow | undefined>;
 }
 
 export interface SavedFacilityRepositoryPort {
@@ -118,7 +153,10 @@ export interface IdempotencyRepositoryPort {
 }
 
 export interface Repositories {
+  companies: CompanyRepositoryPort;
+  companyUsers: CompanyUserRepositoryPort;
   facilities: FacilityRepositoryPort;
+  partnerFacilities: PartnerFacilityRepositoryPort;
   reviews: ReviewRepositoryPort;
   references: ReferenceRepositoryPort;
   users: UserRepositoryPort;

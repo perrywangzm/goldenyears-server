@@ -1,13 +1,13 @@
 import type { Repositories } from "@/db/repositories/ports";
 import { AssessmentService } from "@/application/assessment/assessmentService";
-import { requireFamilyUser } from "@/shared/authz/policies";
+import { requireAuthenticatedUser } from "@/shared/authz/policies";
 import type { RequestContext } from "@/shared/request-context/context";
 
 export class AccountDashboardService {
   constructor(private readonly repos: Repositories) {}
 
   async getDashboard(ctx: RequestContext) {
-    const userId = requireFamilyUser(ctx);
+    const userId = requireAuthenticatedUser(ctx);
     const [saved, tours, latestAssessment] = await Promise.all([
       this.repos.savedFacilities.listForUser(userId),
       this.repos.tours.listForUser(userId),

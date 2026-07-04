@@ -35,12 +35,17 @@ function services(repos: Repositories) {
 }
 
 export function registerAssessmentRoutes(app: AppOpenAPI) {
+  registerAssessmentRouteSet(app, "/api/v1/public", "public_");
+  registerAssessmentRouteSet(app, "/api/v1", "");
+}
+
+function registerAssessmentRouteSet(app: AppOpenAPI, basePath: string, operationPrefix: string) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/get_assessment_schema",
-      operationId: "get_assessment_schema",
-      tags: ["assessment"],
+      path: `${basePath}/get_assessment_schema`,
+      operationId: `${operationPrefix}get_assessment_schema`,
+      tags: ["public"],
       request: { body: jsonBody(GetAssessmentSchemaRequestSchema) },
       responses: ok(dataEnvelopeSchema(AssessmentSchemaSchema, "GetAssessmentSchemaResponse")),
     }),
@@ -53,9 +58,9 @@ export function registerAssessmentRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/create_assessment_result",
-      operationId: "create_assessment_result",
-      tags: ["assessment"],
+      path: `${basePath}/create_assessment_result`,
+      operationId: `${operationPrefix}create_assessment_result`,
+      tags: ["public"],
       request: { body: jsonBody(CreateAssessmentResultRequestSchema) },
       responses: mutationOk(dataEnvelopeSchema(AssessmentResultSchema, "CreateAssessmentResultResponse")),
       "x-goldenyears-invalidates": ["assessment"],
@@ -74,9 +79,9 @@ export function registerAssessmentRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/get_latest_assessment_result",
-      operationId: "get_latest_assessment_result",
-      tags: ["assessment"],
+      path: `${basePath}/get_latest_assessment_result`,
+      operationId: `${operationPrefix}get_latest_assessment_result`,
+      tags: ["public"],
       request: { body: jsonBody(GetLatestAssessmentResultRequestSchema) },
       responses: ok(dataEnvelopeSchema(AssessmentResultSchema.nullable(), "GetLatestAssessmentResultResponse")),
     }),
@@ -93,9 +98,9 @@ export function registerAssessmentRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/list_assessment_matches",
-      operationId: "list_assessment_matches",
-      tags: ["assessment"],
+      path: `${basePath}/list_assessment_matches`,
+      operationId: `${operationPrefix}list_assessment_matches`,
+      tags: ["public"],
       request: { body: jsonBody(ListAssessmentMatchesRequestSchema) },
       responses: ok(dataEnvelopeSchema(ListAssessmentMatchesResponseSchema, "ListAssessmentMatchesResponse")),
     }),
@@ -113,9 +118,9 @@ export function registerAssessmentRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/delete_latest_assessment_result",
-      operationId: "delete_latest_assessment_result",
-      tags: ["assessment"],
+      path: `${basePath}/delete_latest_assessment_result`,
+      operationId: `${operationPrefix}delete_latest_assessment_result`,
+      tags: ["public"],
       request: { body: jsonBody(DeleteLatestAssessmentResultRequestSchema) },
       responses: mutationOk(dataEnvelopeSchema(DeleteLatestAssessmentResultDataSchema, "DeleteLatestAssessmentResultResponse")),
       "x-goldenyears-invalidates": ["assessment"],

@@ -1,11 +1,14 @@
-export type ActorRole = "anonymous" | "family" | "facility_manager" | "admin" | "moderator" | "cms_editor";
+import type { SessionAudience } from "@/shared/authz/sessionAudience";
+
+export type PlatformRole = "admin" | "moderator" | "cms_editor";
+export type ActorRole = "anonymous" | PlatformRole;
 
 export interface ActorContext {
   kind: "anonymous" | "user";
   userId: string | null;
   sessionId: string | null;
+  audience: SessionAudience | null;
   roles: ActorRole[];
-  facilityIds?: string[];
 }
 
 export interface RequestContext {
@@ -22,16 +25,17 @@ export const anonymousActor: ActorContext = {
   kind: "anonymous",
   userId: null,
   sessionId: null,
+  audience: null,
   roles: ["anonymous"],
 };
 
-export function requireFamilyActor(ctx: RequestContext): asserts ctx is RequestContext & {
+export function requireAuthenticatedActor(ctx: RequestContext): asserts ctx is RequestContext & {
   actor: ActorContext & { kind: "user"; userId: string };
 } {
-  if (ctx.actor.kind !== "user" || !ctx.actor.roles.includes("family")) {
+  if (ctx.actor.kind !== "user" || !ctx.actor.userId) {
     throw new (class extends Error {
       code = "unauthenticated";
-    })("A signed-in family user is required.");
+    })("A signed-in user is required.");
   }
 }
 

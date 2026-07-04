@@ -1,13 +1,15 @@
 import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
 import type { AssessmentResultsTable } from "@/db/schema/assessmentTypes";
+import type { SessionAudience } from "@/shared/authz/sessionAudience";
 
 export type Timestamp = ColumnType<Date, Date | string | undefined, Date | string>;
 
 export interface UsersTable {
   id: string;
+  auth_user_id: string | null;
   email: string;
   display_name: string;
-  password_hash: string;
+  password_hash: string | null;
   status: "active" | "disabled";
   created_at: Timestamp;
   updated_at: Timestamp;
@@ -17,13 +19,31 @@ export interface SessionsTable {
   id: string;
   user_id: string;
   token_hash: string;
+  audience: SessionAudience;
   expires_at: Timestamp;
   created_at: Timestamp;
   revoked_at: Timestamp | null;
 }
 
+export interface CompaniesTable {
+  id: string;
+  name: string;
+  status: "active" | "disabled";
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+
+export interface CompanyUsersTable {
+  company_id: string;
+  user_id: string;
+  status: "active" | "disabled";
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+
 export interface FacilitiesTable {
   id: string;
+  company_id: string | null;
   slug: string;
   name: string;
   tagline: string;
@@ -86,6 +106,7 @@ export interface FacilityMembershipsTable {
 
 export interface ListingSubmissionsTable {
   id: Generated<string>;
+  company_id: string | null;
   facility_id: string | null;
   submitter_user_id: string | null;
   status: "draft" | "submitted" | "approved" | "rejected" | "withdrawn";
@@ -191,6 +212,8 @@ export interface ArticlesTable {
 export interface Database {
   users: UsersTable;
   sessions: SessionsTable;
+  companies: CompaniesTable;
+  company_users: CompanyUsersTable;
   roles: RolesTable;
   user_roles: UserRolesTable;
   facilities: FacilitiesTable;
@@ -214,6 +237,9 @@ export type ReviewRow = Selectable<ReviewsTable>;
 export type NewReviewRow = Insertable<ReviewsTable>;
 export type UserRow = Selectable<UsersTable>;
 export type SessionRow = Selectable<SessionsTable>;
+export type CompanyRow = Selectable<CompaniesTable>;
+export type CompanyUserRow = Selectable<CompanyUsersTable>;
+export type UserRoleRow = Selectable<UserRolesTable>;
 export type TourRequestRow = Selectable<TourRequestsTable>;
 export type NewTourRequestRow = Insertable<TourRequestsTable>;
 export type ArticleRow = Selectable<ArticlesTable>;

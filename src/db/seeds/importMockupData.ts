@@ -191,6 +191,7 @@ function toReferenceItems(kind: ReferenceItemRow["kind"], rows: MockupReference[
 function toFacilityRow(facility: MockupFacility): NewFacilityRow {
   return {
     id: `fac_${facility.id.replaceAll("-", "_")}`,
+    company_id: null,
     slug: facility.id,
     name: facility.name,
     tagline: facility.tagline ?? "",

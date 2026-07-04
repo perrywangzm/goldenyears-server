@@ -14,14 +14,16 @@
     }
   ],
   "vars": {
-    "CORS_ORIGIN": "http://localhost:5173",
-    "SESSION_COOKIE_NAME": "gy_session"
+    "CORS_ORIGIN": "https://goldenyears.asia,https://www.goldenyears.asia,https://golden-years-client-next.pages.dev",
+    "SUPABASE_URL": "https://vocnhmoigfqybjhqyatx.supabase.co",
+    "SUPABASE_AUTH_REDIRECT_URL": "https://www.goldenyears.asia/login",
+    "SUPABASE_RUNTIME_EMAIL_LINKING": "false",
+    "SUPABASE_AUTH_REQUEST_TIMEOUT_MS": "8000"
   },
   "env": {
     "local": {
       "vars": {
-        "CORS_ORIGIN": "http://localhost:5173",
-        "SESSION_COOKIE_NAME": "gy_session"
+        "CORS_ORIGIN": "http://localhost:5173"
       },
       "hyperdrive": [
         {
@@ -35,7 +37,10 @@
     "remote": {
       "vars": {
         "CORS_ORIGIN": "http://localhost:5173",
-        "SESSION_COOKIE_NAME": "gy_session"
+        "SUPABASE_URL": "https://vocnhmoigfqybjhqyatx.supabase.co",
+        "SUPABASE_AUTH_REDIRECT_URL": "http://localhost:5173/login",
+        "SUPABASE_RUNTIME_EMAIL_LINKING": "false",
+        "SUPABASE_AUTH_REQUEST_TIMEOUT_MS": "8000"
       },
       "hyperdrive": [
         {

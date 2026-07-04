@@ -121,6 +121,7 @@ describe("public marketplace APIs", () => {
       id: "sess_homepage",
       user_id: "usr_family_demo",
       token_hash: await sha256(token),
+      audience: "user",
       expires_at: new Date("2026-06-01T00:00:00.000Z"),
       created_at: new Date("2026-05-18T00:00:00.000Z"),
       revoked_at: null,
@@ -131,7 +132,7 @@ describe("public marketplace APIs", () => {
     const response = await client.post(
       "/api/v1/get_homepage",
       { exclude_saved: true },
-      { cookie: `gy_session=${token}` },
+      { cookie: `gy_user_session=${token}` },
     );
     const body = await json(response);
 

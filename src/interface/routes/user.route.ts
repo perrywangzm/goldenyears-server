@@ -12,7 +12,7 @@ import {
   SavedFacilityCardSchema,
   SavedFacilitySchema,
   TourRequestSchema,
-} from "@/interface/schemas/family.schema";
+} from "@/interface/schemas/user.schema";
 import {
   dataEnvelope,
   dataEnvelopeSchema,
@@ -35,13 +35,18 @@ function services(repos: Repositories) {
   };
 }
 
-export function registerFamilyRoutes(app: AppOpenAPI) {
+export function registerUserRoutes(app: AppOpenAPI) {
+  registerUserRouteSet(app, "/api/v1/user", "user_");
+  registerUserRouteSet(app, "/api/v1", "");
+}
+
+function registerUserRouteSet(app: AppOpenAPI, basePath: string, operationPrefix: string) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/list_saved_facilities",
-      operationId: "list_saved_facilities",
-      tags: ["family"],
+      path: `${basePath}/list_saved_facilities`,
+      operationId: `${operationPrefix}list_saved_facilities`,
+      tags: ["user"],
       request: { body: jsonBody(EmptyJsonBodySchema) },
       responses: ok(listEnvelopeSchema(SavedFacilityCardSchema, zPage(), "ListSavedFacilitiesResponse")),
     }),
@@ -51,9 +56,9 @@ export function registerFamilyRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/create_saved_facility",
-      operationId: "create_saved_facility",
-      tags: ["family"],
+      path: `${basePath}/create_saved_facility`,
+      operationId: `${operationPrefix}create_saved_facility`,
+      tags: ["user"],
       request: { body: jsonBody(FacilityIdRequestSchema) },
       responses: mutationOk(dataEnvelopeSchema(SavedFacilitySchema, "CreateSavedFacilityResponse")),
       "x-goldenyears-invalidates": ["saved_facility", "facility", "account"],
@@ -67,9 +72,9 @@ export function registerFamilyRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/delete_saved_facility",
-      operationId: "delete_saved_facility",
-      tags: ["family"],
+      path: `${basePath}/delete_saved_facility`,
+      operationId: `${operationPrefix}delete_saved_facility`,
+      tags: ["user"],
       request: { body: jsonBody(FacilityIdRequestSchema) },
       responses: mutationOk(dataEnvelopeSchema(zDeleteResponse(), "DeleteSavedFacilityResponse")),
       "x-goldenyears-invalidates": ["saved_facility", "facility", "account"],
@@ -83,9 +88,9 @@ export function registerFamilyRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/create_tour_request",
-      operationId: "create_tour_request",
-      tags: ["family"],
+      path: `${basePath}/create_tour_request`,
+      operationId: `${operationPrefix}create_tour_request`,
+      tags: ["user"],
       request: {
         headers: IdempotencyHeaderSchema,
         body: jsonBody(CreateTourRequestSchema),
@@ -109,9 +114,9 @@ export function registerFamilyRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/list_tour_requests",
-      operationId: "list_tour_requests",
-      tags: ["family"],
+      path: `${basePath}/list_tour_requests`,
+      operationId: `${operationPrefix}list_tour_requests`,
+      tags: ["user"],
       request: { body: jsonBody(EmptyJsonBodySchema) },
       responses: ok(listEnvelopeSchema(TourRequestSchema, zPage(), "ListTourRequestsResponse")),
     }),
@@ -121,9 +126,9 @@ export function registerFamilyRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/get_account_dashboard",
-      operationId: "get_account_dashboard",
-      tags: ["family"],
+      path: `${basePath}/get_account_dashboard`,
+      operationId: `${operationPrefix}get_account_dashboard`,
+      tags: ["user"],
       request: { body: jsonBody(EmptyJsonBodySchema) },
       responses: ok(dataEnvelopeSchema(AccountDashboardSchema, "GetAccountDashboardResponse")),
     }),

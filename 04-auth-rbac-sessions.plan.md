@@ -44,7 +44,7 @@ apps/api/src/shared/authz/*.bdd.test.ts
 Feature: Browser session authentication
 Scenario: Login creates a secure session and get_me returns safe user context
   Given a verified family user with valid credentials
-  When the user calls create_session
+  When the user calls user/auth/login
   Then the response sets an HTTP-only Secure SameSite cookie
   And a later get_me response returns the safe user object, roles, saved count, unread notification count, managed facility count, and review invite count
 ```
@@ -79,7 +79,7 @@ Scenario: Cookie-authenticated mutations require a valid CSRF signal
 ```gherkin
 Feature: Rate-limited auth flows
 Scenario: Repeated failed login attempts are throttled
-  Given multiple failed create_session attempts for the same account or IP bucket
+  Given multiple failed user/auth/login attempts for the same account or IP bucket
   When the threshold is exceeded
   Then later attempts fail with rate_limited
   And details.retry_after_ms is included

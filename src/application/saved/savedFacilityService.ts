@@ -1,7 +1,7 @@
 import type { Repositories } from "@/db/repositories/ports";
 import { toFacilityCardProjection } from "@/db/projections/facilityPublicProjection";
 import { AuditWriter } from "@/shared/audit/auditWriter";
-import { requireFamilyUser } from "@/shared/authz/policies";
+import { requireAuthenticatedUser } from "@/shared/authz/policies";
 import type { RequestContext } from "@/shared/request-context/context";
 
 export class SavedFacilityService {
@@ -12,7 +12,7 @@ export class SavedFacilityService {
   }
 
   async list(ctx: RequestContext) {
-    const userId = requireFamilyUser(ctx);
+    const userId = requireAuthenticatedUser(ctx);
     const savedIds = await this.repos.savedFacilities.savedFacilityIdsForUser(userId);
     const publishedReviews = await this.repos.reviews.allPublished();
     const saves = await this.repos.savedFacilities.listForUser(userId);
@@ -26,7 +26,7 @@ export class SavedFacilityService {
   }
 
   async create(ctx: RequestContext, facilityId: string) {
-    const userId = requireFamilyUser(ctx);
+    const userId = requireAuthenticatedUser(ctx);
     const facility = await this.repos.facilities.findPublicById(facilityId);
     const save = await this.repos.savedFacilities.create(userId, facility.id);
     await this.audit.write(ctx, {
@@ -43,7 +43,7 @@ export class SavedFacilityService {
   }
 
   async delete(ctx: RequestContext, facilityId: string) {
-    const userId = requireFamilyUser(ctx);
+    const userId = requireAuthenticatedUser(ctx);
     const facility = await this.repos.facilities.findPublicById(facilityId);
     await this.repos.savedFacilities.delete(userId, facility.id);
     await this.audit.write(ctx, {

@@ -5,7 +5,8 @@ export function buildUserActor(overrides: Partial<ActorContext> = {}): ActorCont
     kind: "user",
     userId: "user_test",
     sessionId: "session_test",
-    roles: ["family"],
+    audience: "user",
+    roles: [],
     ...overrides,
   };
 }

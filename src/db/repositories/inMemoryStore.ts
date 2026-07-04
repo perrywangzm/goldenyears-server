@@ -1,6 +1,27 @@
-import type { ArticleRow, FacilityRow, ReviewRow, ReferenceItemRow, SessionRow, TourRequestRow, UserRow } from "@/db/schema/types";
+import type {
+  ArticleRow,
+  CompanyRow,
+  CompanyUserRow,
+  FacilityRow,
+  ReviewRow,
+  ReferenceItemRow,
+  SessionRow,
+  TourRequestRow,
+  UserRoleRow,
+  UserRow,
+} from "@/db/schema/types";
 import type { AssessmentResultRow } from "@/db/schema/assessmentTypes";
-import { seedArticles, seedFacilities, seedReferenceItems, seedReviews, seedUsers } from "@/db/seeds/seedData";
+import {
+  seedArticles,
+  seedCompanies,
+  seedCompanyUsers,
+  seedFacilities,
+  seedPartnerFacilities,
+  seedReferenceItems,
+  seedReviews,
+  seedUserRoles,
+  seedUsers,
+} from "@/db/seeds/seedData";
 
 export interface SavedFacilityRecord {
   id: string;
@@ -42,7 +63,10 @@ export interface IdempotencyRecord {
 
 export interface InMemoryStore {
   users: UserRow[];
+  userRoles: UserRoleRow[];
   sessions: SessionRow[];
+  companies: CompanyRow[];
+  companyUsers: CompanyUserRow[];
   facilities: FacilityRow[];
   reviews: ReviewRow[];
   savedFacilities: SavedFacilityRecord[];
@@ -58,8 +82,11 @@ export interface InMemoryStore {
 export function createSeededStore(): InMemoryStore {
   return {
     users: structuredClone(seedUsers),
+    userRoles: structuredClone(seedUserRoles),
     sessions: [],
-    facilities: structuredClone(seedFacilities),
+    companies: structuredClone(seedCompanies),
+    companyUsers: structuredClone(seedCompanyUsers),
+    facilities: structuredClone([...seedFacilities, ...seedPartnerFacilities]),
     reviews: structuredClone(seedReviews),
     savedFacilities: [],
     tourRequests: [],

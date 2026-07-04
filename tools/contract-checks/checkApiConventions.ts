@@ -28,12 +28,36 @@ export function checkApiConventions(document = generateOpenApiDocument()) {
       }
 
       const op = operation as Operation;
-      const endpointName = path.split("/").at(-1);
+      const pathParts = path.split("/").filter(Boolean).slice(2);
+      const endpointName = pathParts.at(-1);
+      const surface = pathParts.length >= 2 ? pathParts[0] : null;
+      const authActions = new Set([
+        "login",
+        "logout",
+        "signup",
+        "confirm_verification",
+        "request_password_reset",
+        "confirm_password_reset",
+        "resend_verification",
+      ]);
+      const isAuthOperation =
+        pathParts.length === 3 && pathParts[1] === "auth" && authActions.has(endpointName ?? "");
+      const expectedOperationId = isAuthOperation
+        ? `${surface}_auth_${endpointName}`
+        : surface
+          ? `${surface}_${endpointName}`
+          : endpointName;
+      if (pathParts.length > 2 && !isAuthOperation) {
+        violations.push(`${method.toUpperCase()} ${path} must not nest resources below the API surface.`);
+      }
       if (method !== "post") {
         violations.push(`${method.toUpperCase()} ${path} must use POST.`);
       }
-      if (op.operationId !== endpointName) {
-        violations.push(`${method.toUpperCase()} ${path} operationId must equal ${endpointName}.`);
+      if (surface && !["public", "user", "partner", "admin"].includes(surface)) {
+        violations.push(`${method.toUpperCase()} ${path} uses an unsupported API surface.`);
+      }
+      if (op.operationId !== expectedOperationId) {
+        violations.push(`${method.toUpperCase()} ${path} operationId must equal ${expectedOperationId}.`);
       }
       const pathOrQueryParameters = (op.parameters ?? []).filter(
         (parameter) => parameter.in === "path" || parameter.in === "query",

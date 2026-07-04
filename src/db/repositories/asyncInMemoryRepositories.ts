@@ -2,9 +2,12 @@ import { getInMemoryStore, type InMemoryStore } from "./inMemoryStore";
 import { AssessmentRepository } from "./assessmentRepository";
 import { ArticleRepository } from "./articleRepository";
 import { AuditRepository } from "./auditRepository";
+import { CompanyRepository } from "./companyRepository";
+import { CompanyUserRepository } from "./companyUserRepository";
 import { FacilityRepository } from "./facilityRepository";
 import { IdempotencyRepository } from "./idempotencyRepository";
 import { OutboxRepository } from "./outboxRepository";
+import { PartnerFacilityRepository } from "./partnerFacilityRepository";
 import type { Repositories } from "./ports";
 import { ReferenceRepository } from "./referenceRepository";
 import { ReviewRepository } from "./reviewRepository";
@@ -19,6 +22,9 @@ function promisify<T>(value: T): Promise<T> {
 
 function wrapSyncRepositories(store: InMemoryStore): Repositories {
   const facilities = new FacilityRepository(store);
+  const companies = new CompanyRepository(store);
+  const companyUsers = new CompanyUserRepository(store);
+  const partnerFacilities = new PartnerFacilityRepository(store);
   const reviews = new ReviewRepository(store);
   const references = new ReferenceRepository(store);
   const users = new UserRepository(store);
@@ -32,10 +38,26 @@ function wrapSyncRepositories(store: InMemoryStore): Repositories {
   const idempotency = new IdempotencyRepository(store);
 
   return {
+    companies: {
+      findById: (id) => promisify(companies.findById(id)),
+      listActiveForUser: (userId) => promisify(companies.listActiveForUser(userId)),
+    },
+    companyUsers: {
+      listActiveForUser: (userId) => promisify(companyUsers.listActiveForUser(userId)),
+      findActiveMembership: (userId, companyId) =>
+        promisify(companyUsers.findActiveMembership(userId, companyId)),
+      countActiveCompanies: (userId) => promisify(companyUsers.countActiveCompanies(userId)),
+    },
     facilities: {
       listPublic: (input) => promisify(facilities.listPublic(input)),
       findPublicById: (idOrSlug) => promisify(facilities.findPublicById(idOrSlug)),
       listPublicByIds: (ids) => promisify(facilities.listPublicByIds(ids)),
+    },
+    partnerFacilities: {
+      listAccessibleForUser: (userId, input) =>
+        promisify(partnerFacilities.listAccessibleForUser(userId, input)),
+      findAccessibleForUserAndFacility: (userId, facilityId) =>
+        promisify(partnerFacilities.findAccessibleForUserAndFacility(userId, facilityId)),
     },
     reviews: {
       listPublishedForFacility: (facilityId, limit, offset) =>
@@ -48,11 +70,17 @@ function wrapSyncRepositories(store: InMemoryStore): Repositories {
     users: {
       findByEmail: (email) => promisify(users.findByEmail(email)),
       findById: (id) => promisify(users.findById(id)),
+      findByAuthUserId: (authUserId) => promisify(users.findByAuthUserId(authUserId)),
+      linkAuthUserId: (userId, authUserId, patch) =>
+        promisify(users.linkAuthUserId(userId, authUserId, patch)),
+      createFromAuthIdentity: (input) => promisify(users.createFromAuthIdentity(input)),
+      updateProfile: (userId, patch) => promisify(users.updateProfile(userId, patch)),
       rolesForUser: (userId) => promisify(users.rolesForUser(userId)),
     },
     sessions: {
       create: (session) => promisify(sessions.create(session)),
-      findActiveByTokenHash: (tokenHash, now) => promisify(sessions.findActiveByTokenHash(tokenHash, now)),
+      findActiveByTokenHash: (tokenHash, audience, now) =>
+        promisify(sessions.findActiveByTokenHash(tokenHash, audience, now)),
       revoke: (sessionId, now) => promisify(sessions.revoke(sessionId, now)).then(() => undefined),
     },
     savedFacilities: {

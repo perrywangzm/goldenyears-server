@@ -108,13 +108,13 @@ describe("assessment APIs", () => {
 
   it("signed-in users can create and revisit their latest assessment without the anonymous cookie", async () => {
     const client = createHttpTestClient();
-    const login = await client.post("/api/v1/create_session", {
+    const login = await client.post("/api/v1/user/auth/login", {
       email: "family@example.com",
       password: "password",
     });
     const setCookie = login.headers.get("set-cookie") ?? "";
     const cookie = cookieHeader(setCookie);
-    const csrfToken = cookieValue(setCookie, "gy_session_csrf");
+    const csrfToken = cookieValue(setCookie, "gy_user_session_csrf");
 
     const created = await client.post(
       "/api/v1/create_assessment_result",
@@ -157,7 +157,7 @@ describe("assessment APIs", () => {
     expect(body.data).toBeNull();
   });
 
-  it("create_session claims an anonymous assessment for the signed-in user", async () => {
+  it("supabase-contract:user-login-claims-anonymous-assessment", async () => {
     const client = createHttpTestClient();
     const created = await client.post("/api/v1/create_assessment_result", {
       schema_version: "assessment_v1",
@@ -167,7 +167,7 @@ describe("assessment APIs", () => {
     const session = assessmentCookie.match(/gy_assessment_session=([^;]+)/)?.[1];
 
     const login = await client.post(
-      "/api/v1/create_session",
+      "/api/v1/user/auth/login",
       { email: "family@example.com", password: "password" },
       { cookie: `gy_assessment_session=${session}` },
     );
@@ -220,7 +220,7 @@ describe("assessment APIs", () => {
 });
 
 function cookieHeader(setCookie: string) {
-  return ["gy_session", "gy_session_csrf"]
+  return ["gy_user_session", "gy_user_session_csrf"]
     .map((name) => `${name}=${cookieValue(setCookie, name)}`)
     .join("; ");
 }

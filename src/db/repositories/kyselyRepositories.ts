@@ -5,10 +5,12 @@ import type {
   FacilityRow,
   NewFacilityRow,
   ReferenceItemRow,
+  UserRow,
   UsersTable,
 } from "@/db/schema/types";
 import { ApiError } from "@/shared/errors/apiError";
 import type { ActorRole } from "@/shared/request-context/context";
+import type { SessionAudience } from "@/shared/authz/sessionAudience";
 import type { FacilitySearchInput } from "./facilityRepository";
 import type {
   AuditRecord,
@@ -142,14 +144,133 @@ export class KyselyUserRepository {
     return this.db.selectFrom("users").selectAll().where("id", "=", id).executeTakeFirst();
   }
 
+  async findByAuthUserId(authUserId: string) {
+    return this.db.selectFrom("users").selectAll().where("auth_user_id", "=", authUserId).executeTakeFirst();
+  }
+
+  async linkAuthUserId(userId: string, authUserId: string, patch?: { display_name?: string }) {
+    try {
+      const linked = await this.db
+        .updateTable("users")
+        .set({
+          auth_user_id: authUserId,
+          ...(patch?.display_name ? { display_name: patch.display_name } : {}),
+          updated_at: new Date(),
+        })
+        .where("id", "=", userId)
+        .where((eb) => eb.or([eb("auth_user_id", "is", null), eb("auth_user_id", "=", authUserId)]))
+        .returningAll()
+        .executeTakeFirst();
+      if (linked) return linked;
+    } catch (error) {
+      const owner = await this.findByAuthUserId(authUserId);
+      if (owner?.id === userId) return owner;
+      throw new ApiError("conflict", "This identity is linked to a different account.", 409);
+    }
+    const current = await this.findById(userId);
+    if (current?.auth_user_id === authUserId) return current;
+    throw new ApiError("conflict", "This account is linked to a different identity.", 409);
+  }
+
+  async createFromAuthIdentity(input: {
+    auth_user_id: string;
+    email: string;
+    display_name: string;
+    status: UsersTable["status"];
+  }): Promise<UserRow> {
+    const now = new Date();
+    const row: UserRow = {
+      id: `usr_${crypto.randomUUID().replaceAll("-", "")}`,
+      auth_user_id: input.auth_user_id,
+      email: input.email.toLowerCase(),
+      display_name: input.display_name,
+      password_hash: null,
+      status: input.status,
+      created_at: now,
+      updated_at: now,
+    };
+    await this.db.insertInto("users").values(row as never).execute();
+    return row;
+  }
+
+  async updateProfile(userId: string, patch: { display_name?: string }) {
+    await this.db
+      .updateTable("users")
+      .set({
+        ...(patch.display_name ? { display_name: patch.display_name } : {}),
+        updated_at: new Date(),
+      })
+      .where("id", "=", userId)
+      .execute();
+    return (await this.findById(userId))!;
+  }
+
   async rolesForUser(userId: string): Promise<ActorRole[]> {
     const user = await this.findById(userId);
-    return user?.status === "active" ? ["family"] : [];
+    if (user?.status !== "active") return [];
+    const rows = await this.db
+      .selectFrom("user_roles")
+      .select("role_id")
+      .where("user_roles.user_id", "=", userId)
+      .where("role_id", "in", ["admin", "moderator", "cms_editor"])
+      .execute();
+    return rows.map((row) => row.role_id as Exclude<ActorRole, "anonymous">);
   }
 
   async create(row: UsersTable) {
     await this.db.insertInto("users").values(row as never).execute();
     return row;
+  }
+}
+
+export class KyselyCompanyRepository {
+  constructor(private readonly db: DbExecutor) {}
+
+  async findById(id: string) {
+    return this.db.selectFrom("companies").selectAll().where("id", "=", id).executeTakeFirst();
+  }
+
+  async listActiveForUser(userId: string) {
+    return this.db
+      .selectFrom("companies")
+      .innerJoin("company_users", "company_users.company_id", "companies.id")
+      .selectAll("companies")
+      .where("company_users.user_id", "=", userId)
+      .where("company_users.status", "=", "active")
+      .where("companies.status", "=", "active")
+      .orderBy("companies.name", "asc")
+      .execute();
+  }
+}
+
+export class KyselyCompanyUserRepository {
+  constructor(private readonly db: DbExecutor) {}
+
+  async listActiveForUser(userId: string) {
+    return this.db
+      .selectFrom("company_users")
+      .innerJoin("companies", "companies.id", "company_users.company_id")
+      .selectAll("company_users")
+      .where("company_users.user_id", "=", userId)
+      .where("company_users.status", "=", "active")
+      .where("companies.status", "=", "active")
+      .execute();
+  }
+
+  async findActiveMembership(userId: string, companyId: string) {
+    return this.db
+      .selectFrom("company_users")
+      .innerJoin("companies", "companies.id", "company_users.company_id")
+      .selectAll("company_users")
+      .where("company_users.user_id", "=", userId)
+      .where("company_users.company_id", "=", companyId)
+      .where("company_users.status", "=", "active")
+      .where("companies.status", "=", "active")
+      .executeTakeFirst();
+  }
+
+  async countActiveCompanies(userId: string) {
+    return (await this.listActiveForUser(userId)).length;
   }
 }
 
@@ -161,11 +282,16 @@ export class KyselySessionRepository {
     return row;
   }
 
-  async findActiveByTokenHash(tokenHash: string, now = new Date()) {
+  async findActiveByTokenHash(
+    tokenHash: string,
+    audience: SessionAudience,
+    now = new Date(),
+  ) {
     return this.db
       .selectFrom("sessions")
       .selectAll()
       .where("token_hash", "=", tokenHash)
+      .where("audience", "=", audience)
       .where("expires_at", ">", now)
       .where("revoked_at", "is", null)
       .executeTakeFirst();
@@ -177,6 +303,42 @@ export class KyselySessionRepository {
       .set({ revoked_at: now })
       .where("id", "=", sessionId)
       .execute();
+  }
+}
+
+export class KyselyPartnerFacilityRepository {
+  constructor(private readonly db: DbExecutor) {}
+
+  async listAccessibleForUser(userId: string, input: { limit: number; offset: number }) {
+    const rows = await this.accessibleForUser(userId)
+      .selectAll("facilities")
+      .orderBy("facilities.updated_at", "desc")
+      .orderBy("facilities.id", "asc")
+      .limit(input.limit)
+      .offset(input.offset)
+      .execute();
+    const totalResult = await this.accessibleForUser(userId)
+      .select((eb) => eb.fn.countAll<number>().as("total"))
+      .executeTakeFirstOrThrow();
+    const total = Number(totalResult.total);
+    return { rows, total, hasMore: input.offset + rows.length < total };
+  }
+
+  async findAccessibleForUserAndFacility(userId: string, facilityId: string) {
+    return this.accessibleForUser(userId)
+      .selectAll("facilities")
+      .where("facilities.id", "=", facilityId)
+      .executeTakeFirst();
+  }
+
+  private accessibleForUser(userId: string) {
+    return this.db
+      .selectFrom("facilities")
+      .innerJoin("companies", "companies.id", "facilities.company_id")
+      .innerJoin("company_users", "company_users.company_id", "companies.id")
+      .where("company_users.user_id", "=", userId)
+      .where("company_users.status", "=", "active")
+      .where("companies.status", "=", "active");
   }
 }
 
@@ -419,9 +581,12 @@ const emptyArticleRepository = {
 export function createKyselyRepositories(db: DbExecutor): Repositories {
   return {
     audit: new KyselyAuditRepository(db),
+    companies: new KyselyCompanyRepository(db),
+    companyUsers: new KyselyCompanyUserRepository(db),
     facilities: new KyselyFacilityRepository(db),
     idempotency: new KyselyIdempotencyRepository(db),
     outbox: new KyselyOutboxRepository(db),
+    partnerFacilities: new KyselyPartnerFacilityRepository(db),
     references: new KyselyReferenceRepository(db),
     reviews: new KyselyReviewRepository(db),
     savedFacilities: new KyselySavedFacilityRepository(db),

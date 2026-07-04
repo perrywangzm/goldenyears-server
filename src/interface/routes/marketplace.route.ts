@@ -51,12 +51,17 @@ function services(repos: Repositories) {
 }
 
 export function registerMarketplaceRoutes(app: AppOpenAPI) {
+  registerMarketplaceRouteSet(app, "/api/v1/public", "public_");
+  registerMarketplaceRouteSet(app, "/api/v1", "");
+}
+
+function registerMarketplaceRouteSet(app: AppOpenAPI, basePath: string, operationPrefix: string) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/get_homepage",
-      operationId: "get_homepage",
-      tags: ["marketplace"],
+      path: `${basePath}/get_homepage`,
+      operationId: `${operationPrefix}get_homepage`,
+      tags: ["public"],
       request: { body: jsonBody(HomepageRequestSchema) },
       responses: ok(dataEnvelopeSchema(HomepageResponseSchema, "GetHomepageResponse")),
     }),
@@ -72,9 +77,9 @@ export function registerMarketplaceRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/get_search_options",
-      operationId: "get_search_options",
-      tags: ["marketplace"],
+      path: `${basePath}/get_search_options`,
+      operationId: `${operationPrefix}get_search_options`,
+      tags: ["public"],
       request: { body: jsonBody(EmptyJsonBodySchema) },
       responses: ok(dataEnvelopeSchema(SearchOptionsSchema, "GetSearchOptionsResponse")),
     }),
@@ -84,9 +89,9 @@ export function registerMarketplaceRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/search_facilities",
-      operationId: "search_facilities",
-      tags: ["marketplace"],
+      path: `${basePath}/search_facilities`,
+      operationId: `${operationPrefix}search_facilities`,
+      tags: ["public"],
       request: { body: jsonBody(SearchFacilitiesRequestSchema) },
       responses: ok(listEnvelopeSchema(FacilityCardSchema, OffsetPageResponseSchema, "SearchFacilitiesResponse")),
     }),
@@ -100,9 +105,9 @@ export function registerMarketplaceRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/get_facility",
-      operationId: "get_facility",
-      tags: ["marketplace"],
+      path: `${basePath}/get_facility`,
+      operationId: `${operationPrefix}get_facility`,
+      tags: ["public"],
       request: { body: jsonBody(FacilityIdentifierRequestSchema) },
       responses: {
         ...ok(dataEnvelopeSchema(FacilityDetailSchema, "GetFacilityResponse")),
@@ -119,9 +124,9 @@ export function registerMarketplaceRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/list_facility_reviews",
-      operationId: "list_facility_reviews",
-      tags: ["marketplace"],
+      path: `${basePath}/list_facility_reviews`,
+      operationId: `${operationPrefix}list_facility_reviews`,
+      tags: ["public"],
       request: { body: jsonBody(ListFacilityReviewsRequestSchema) },
       responses: ok(listEnvelopeSchema(ReviewSchema, OffsetPageResponseSchema, "ListFacilityReviewsResponse")),
     }),
@@ -136,9 +141,9 @@ export function registerMarketplaceRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/list_articles",
-      operationId: "list_articles",
-      tags: ["articles"],
+      path: `${basePath}/list_articles`,
+      operationId: `${operationPrefix}list_articles`,
+      tags: ["public"],
       request: { body: jsonBody(ListArticlesRequestSchema) },
       responses: ok(listEnvelopeSchema(ArticleSchema, OffsetPageResponseSchema, "ListArticlesResponse")),
     }),
@@ -153,9 +158,9 @@ export function registerMarketplaceRoutes(app: AppOpenAPI) {
   app.openapi(
     createRoute({
       method: "post",
-      path: "/api/v1/get_article",
-      operationId: "get_article",
-      tags: ["articles"],
+      path: `${basePath}/get_article`,
+      operationId: `${operationPrefix}get_article`,
+      tags: ["public"],
       request: { body: jsonBody(ArticleIdentifierRequestSchema) },
       responses: {
         ...ok(dataEnvelopeSchema(ArticleSchema, "GetArticleResponse")),

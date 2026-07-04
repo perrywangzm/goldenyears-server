@@ -5,7 +5,7 @@ This document defines the conventions every HTTP API in this project must follow
 ## TL;DR
 
 - **Transport:** `POST` + `application/json` for every endpoint. No path params, no query params.
-- **URL shape:** `/api/v{N}/{verb}_{resource}` — verb-first, snake_case, singular for single-item ops, plural for list ops.
+- **URL shape:** `/api/v{N}/{surface}/{verb}_{resource}`, with `/api/v{N}/{surface}/auth/{login|logout}` for browser authentication.
 - **Envelopes:** every response is `{ "data": ... }` on success or `{ "error": { ... } }` on failure.
 - **Filtering:** structured operator objects with a closed vocabulary.
 - **Pagination:** list/search endpoints support one of two explicit formats: cursor or offset.
@@ -29,26 +29,31 @@ This document defines the conventions every HTTP API in this project must follow
 ## 2. URL & naming
 
 ```
-/api/v{N}/{verb}_{resource}
+/api/v{N}/{surface}/{verb}_{resource}
+/api/v{N}/{surface}/auth/{login|logout}
 ```
+
+The closed surface vocabulary is `public`, `user`, `partner`, and `admin`. New endpoints must use a surface. Existing `/api/v{N}/{verb}_{resource}` paths are temporary compatibility aliases only; do not add new flat endpoints.
 
 Verb vocabulary (closed set):
 
 | Verb        | Purpose                              | Resource form | Example                          |
 | ----------- | ------------------------------------ | ------------- | -------------------------------- |
-| `get_`      | Fetch one item by id                 | singular      | `/api/v1/get_facility`           |
-| `list_`     | Query/filter many items              | plural        | `/api/v1/list_facilities`        |
-| `search_`   | Full-text / ranked search            | plural        | `/api/v1/search_facilities`      |
-| `create_`   | Create one item                      | singular      | `/api/v1/create_facility`        |
-| `update_`   | Partial update (patch) of one item   | singular      | `/api/v1/update_facility`        |
-| `replace_`  | Full replacement of one item         | singular      | `/api/v1/replace_facility`       |
-| `delete_`   | Delete one item                      | singular      | `/api/v1/delete_facility`        |
-| `batch_*`   | Bulk version of any of the above     | plural        | `/api/v1/batch_create_facilities`|
+| `get_`      | Fetch one item by id                 | singular      | `/api/v1/public/get_facility`           |
+| `list_`     | Query/filter many items              | plural        | `/api/v1/partner/list_managed_facilities` |
+| `search_`   | Full-text / ranked search            | plural        | `/api/v1/public/search_facilities`      |
+| `create_`   | Create one item                      | singular      | `/api/v1/user/create_tour_request`      |
+| `update_`   | Partial update (patch) of one item   | singular      | `/api/v1/partner/update_facility`       |
+| `replace_`  | Full replacement of one item         | singular      | `/api/v1/admin/replace_facility`        |
+| `delete_`   | Delete one item                      | singular      | `/api/v1/user/delete_saved_facility`    |
+| `batch_*`   | Bulk version of any of the above     | plural        | `/api/v1/admin/batch_create_facilities` |
+| `auth/*`    | Start or end a browser auth session  | action        | `/api/v1/partner/auth/login`             |
 
 Rules:
 
 - snake_case only.
-- No nested resources in the path (`/facilities/123/reviews` ❌). Use a dedicated list operation instead (`list_facility_reviews` with the facility identifier in the body).
+- OpenAPI operation IDs are surface-prefixed, for example `public_search_facilities`, `user_list_saved_facilities`, `partner_list_managed_facilities`, and `admin_get_me`. Auth operation IDs use `{surface}_auth_{action}`, such as `partner_auth_login`.
+- No nested resources in the path (`/facilities/123/reviews` ❌). The only functional namespace exception is the canonical `auth/*` action inventory (`login`, `logout`, `signup`, verification, and password recovery); otherwise use a dedicated operation such as `list_facility_reviews` with the facility identifier in the body.
 - One endpoint = one operation. Never overload by inspecting the body shape.
 
 ---
@@ -335,8 +340,9 @@ For endpoints that support it, include `version` in the body of `update_*` / `re
 
 ## 8. Auth & tenancy
 
-- Auth is by bearer token in the `Authorization` header.
-- **Never** accept `user_id`, `tenant_id`, `org_id`, or any actor identity in the request body. These are derived from the token server-side.
+- Browser auth uses audience-bound, host-only cookie sessions. User, partner, and admin routes read their own session cookie and session lookup matches both token hash and expected audience.
+- Browser entry points use `POST /api/v1/{surface}/auth/*`. Login creates the audience-bound session; logout revokes only the current audience's session; signup, verification, and recovery exchange provider tokens inside the Worker BFF.
+- **Never** accept `user_id`, `company_id` ownership, `tenant_id`, `org_id`, or any actor identity in the request body as proof of access. These are derived and authorized server-side.
 - Endpoints that operate on behalf of another principal (admin tools) take an explicit `on_behalf_of` field and require an elevated scope.
 
 ---
@@ -353,7 +359,7 @@ For endpoints that support it, include `version` in the body of `update_*` / `re
 
 | Header               | Direction | Purpose                                          |
 | -------------------- | --------- | ------------------------------------------------ |
-| `Authorization`      | request   | `Bearer <token>`                                 |
+| `X-CSRF-Token`       | request   | Double-submit signal for cookie-authenticated mutations |
 | `Idempotency-Key`    | request   | See §7.1                                         |
 | `X-Request-Id`       | both      | Client may set; server echoes or generates       |
 | `Deprecation`        | response  | `true` if the endpoint is deprecated             |
@@ -366,7 +372,8 @@ For endpoints that support it, include `version` in the body of `update_*` / `re
 
 Before merging a new endpoint, confirm:
 
-- [ ] Path is `/api/v{N}/{verb}_{resource}` with a verb from §2.
+- [ ] Path is `/api/v{N}/{surface}/{verb}_{resource}`, or the defined `/api/v{N}/{surface}/auth/{login|logout}` exception.
+- [ ] OpenAPI `operationId` is `{surface}_{verb}_{resource}`, or `{surface}_auth_{action}` for auth.
 - [ ] `POST` + JSON only. No path or query params.
 - [ ] Request body validated against a schema (Zod / JSON Schema).
 - [ ] If a list/search endpoint: declares the supported request keys and pagination type(s); returns the §6.2 envelope.
@@ -385,9 +392,8 @@ Before merging a new endpoint, confirm:
 ### 12.1 Get a facility
 
 ```http
-POST /api/v1/get_facility
+POST /api/v1/public/get_facility
 Content-Type: application/json
-Authorization: Bearer ...
 
 { "id": "fac_31233213" }
 ```
@@ -399,7 +405,7 @@ Authorization: Bearer ...
 ### 12.2 List facilities
 
 ```http
-POST /api/v1/list_facilities
+POST /api/v1/public/list_facilities
 ```
 
 ```json
@@ -450,7 +456,7 @@ Offset variant:
 ### 12.3 Update a facility
 
 ```http
-POST /api/v1/update_facility
+POST /api/v1/partner/update_facility
 ```
 
 ```json

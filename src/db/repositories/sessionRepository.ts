@@ -1,4 +1,5 @@
 import type { SessionRow } from "../schema/types";
+import type { SessionAudience } from "@/shared/authz/sessionAudience";
 import type { InMemoryStore } from "./inMemoryStore";
 
 export class SessionRepository {
@@ -9,10 +10,13 @@ export class SessionRepository {
     return session;
   }
 
-  findActiveByTokenHash(tokenHash: string, now = new Date()) {
+  findActiveByTokenHash(tokenHash: string, audience: SessionAudience, now = new Date()) {
     return this.store.sessions.find(
       (session) =>
-        session.token_hash === tokenHash && !session.revoked_at && new Date(session.expires_at) > now,
+        session.token_hash === tokenHash &&
+        session.audience === audience &&
+        !session.revoked_at &&
+        new Date(session.expires_at) > now,
     );
   }
 

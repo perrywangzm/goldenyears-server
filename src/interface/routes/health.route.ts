@@ -14,11 +14,9 @@ const HealthDataSchema = z
   })
   .openapi("HealthData");
 
-const route = createRoute({
-  method: "post",
-  path: "/api/v1/get_health",
-  operationId: "get_health",
-  tags: ["system"],
+const routeConfig = {
+  method: "post" as const,
+  tags: ["public"],
   request: {
     body: {
       required: true,
@@ -47,10 +45,17 @@ const route = createRoute({
       },
     },
   },
-});
+};
 
 export function registerHealthRoute(app: AppOpenAPI) {
-  app.openapi(route, (c) =>
-    c.json(dataEnvelope({ status: "ok" as const, service: "golden-years-api" as const }), 200),
+  const handler = (c: Parameters<Parameters<AppOpenAPI["openapi"]>[1]>[0]) =>
+    c.json(dataEnvelope({ status: "ok" as const, service: "golden-years-api" as const }), 200);
+  app.openapi(
+    createRoute({ ...routeConfig, path: "/api/v1/public/get_health", operationId: "public_get_health" }),
+    handler,
+  );
+  app.openapi(
+    createRoute({ ...routeConfig, path: "/api/v1/get_health", operationId: "get_health" }),
+    handler,
   );
 }

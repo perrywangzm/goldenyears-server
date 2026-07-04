@@ -10,20 +10,51 @@ describe("Browser session authentication", () => {
     resetInMemoryStore();
   });
 
-  it("creates a secure session and get_me returns safe user context", async () => {
+  it("supabase-contract:disabled-app-user-rejected", async () => {
+    const store = resetInMemoryStore();
+    const user = store.users.find((row) => row.id === "usr_family_demo");
+    if (!user) throw new Error("Expected seeded family demo user.");
+    user.status = "disabled";
+
+    const client = createHttpTestClient();
+    const login = await client.post("/api/v1/user/auth/login", {
+      email: "family@example.com",
+      password: "password",
+    });
+
+    expect(login.status).toBe(401);
+    await expect(login.json()).resolves.toMatchObject({ error: { code: "unauthenticated" } });
+    expect(login.headers.get("set-cookie")).toBeNull();
+    expect(createRepositories().store.sessions).toHaveLength(0);
+  });
+
+  it("rejects sign-in when Supabase reports the password as invalid", async () => {
+    const client = createHttpTestClient();
+    const login = await client.post("/api/v1/user/auth/login", {
+      email: "family@example.com",
+      password: "definitely-not-the-password",
+    });
+
+    expect(login.status).toBe(401);
+    await expect(login.json()).resolves.toMatchObject({ error: { code: "unauthenticated" } });
+  });
+
+  it("supabase-contract:provider-identity-creates-app-session", async () => {
     const client = createHttpTestClient();
 
-    const login = await client.post("/api/v1/create_session", {
+    const login = await client.post("/api/v1/user/auth/login", {
       email: "family@example.com",
       password: "password",
     });
 
     expect(login.status).toBe(200);
     const setCookie = login.headers.get("set-cookie") ?? "";
-    expect(setCookie).toContain("gy_session=");
+    expect(setCookie).toContain("gy_user_session=");
     expect(setCookie).toContain("HttpOnly");
     expect(setCookie).toContain("Secure");
     expect(setCookie).toContain("SameSite=Lax");
+    expect(createRepositories().store.sessions).toHaveLength(1);
+    expect(createRepositories().store.sessions[0]?.token_hash).not.toContain("gy_user_session");
 
     const cookie = cookieHeader(setCookie);
     const me = await client.post("/api/v1/get_me", {}, { cookie });
@@ -31,13 +62,13 @@ describe("Browser session authentication", () => {
     expect(me.status).toBe(200);
     await expect(me.json()).resolves.toMatchObject({
       data: {
-        actor: { kind: "user", user_id: "usr_family_demo", roles: ["family"] },
+        actor: { kind: "user", user_id: "usr_family_demo", audience: "user", roles: [] },
         user: {
           id: "usr_family_demo",
           email: "family@example.com",
           display_name: "Family Demo",
         },
-        roles: ["family"],
+        roles: [],
         counts: {
           saved_facilities: 0,
           unread_notifications: 0,
@@ -46,6 +77,20 @@ describe("Browser session authentication", () => {
         },
       },
     });
+  });
+
+  it("supabase-contract:user-login-sets-session-and-csrf-cookies", async () => {
+    const client = createHttpTestClient();
+    const login = await client.post("/api/v1/user/auth/login", {
+      email: "family@example.com",
+      password: "password",
+    });
+    const setCookie = login.headers.get("set-cookie") ?? "";
+
+    expect(login.status).toBe(200);
+    expect(setCookie).toContain("gy_user_session=");
+    expect(setCookie).toContain("gy_user_session_csrf=");
+    expect(setCookie).not.toContain("Domain=");
   });
 });
 
@@ -63,7 +108,8 @@ describe("Auth context integrity", () => {
         kind: "user",
         userId: "usr_family_demo",
         sessionId: "sess_test",
-        roles: ["family"],
+        audience: "user",
+        roles: [],
       },
       now: new Date("2026-05-18T00:00:00.000Z"),
     };
@@ -94,13 +140,13 @@ describe("CSRF protection", () => {
 
   it("rejects cookie-authenticated mutations without a matching CSRF token", async () => {
     const client = createHttpTestClient();
-    const login = await client.post("/api/v1/create_session", {
+    const login = await client.post("/api/v1/user/auth/login", {
       email: "family@example.com",
       password: "password",
     });
     const cookie = cookieHeader(login.headers.get("set-cookie") ?? "");
 
-    const logout = await client.post("/api/v1/delete_session", {}, { cookie });
+    const logout = await client.post("/api/v1/user/auth/logout", {}, { cookie });
 
     expect(logout.status).toBe(403);
     await expect(logout.json()).resolves.toMatchObject({
@@ -111,15 +157,15 @@ describe("CSRF protection", () => {
 
   it("allows cookie-authenticated mutations with the double-submit CSRF token", async () => {
     const client = createHttpTestClient();
-    const login = await client.post("/api/v1/create_session", {
+    const login = await client.post("/api/v1/user/auth/login", {
       email: "family@example.com",
       password: "password",
     });
     const setCookie = login.headers.get("set-cookie") ?? "";
     const cookie = cookieHeader(setCookie);
-    const csrfToken = cookieValue(setCookie, "gy_session_csrf");
+    const csrfToken = cookieValue(setCookie, "gy_user_session_csrf");
 
-    const logout = await client.post("/api/v1/delete_session", {}, { cookie, "x-csrf-token": csrfToken });
+    const logout = await client.post("/api/v1/user/auth/logout", {}, { cookie, "x-csrf-token": csrfToken });
 
     expect(logout.status).toBe(200);
     expect(createRepositories().store.sessions[0]?.revoked_at).toBeInstanceOf(Date);
@@ -127,7 +173,7 @@ describe("CSRF protection", () => {
 });
 
 function cookieHeader(setCookie: string) {
-  return ["gy_session", "gy_session_csrf"]
+  return ["gy_user_session", "gy_user_session_csrf"]
     .map((name) => `${name}=${cookieValue(setCookie, name)}`)
     .join("; ");
 }

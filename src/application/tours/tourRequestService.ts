@@ -1,6 +1,6 @@
 import type { Repositories } from "@/db/repositories/ports";
 import { AuditWriter } from "@/shared/audit/auditWriter";
-import { requireFamilyUser } from "@/shared/authz/policies";
+import { requireAuthenticatedUser } from "@/shared/authz/policies";
 import { IdempotencyService } from "@/shared/idempotency/idempotencyService";
 import { OutboxWriter } from "@/shared/outbox/outboxWriter";
 import type { RequestContext } from "@/shared/request-context/context";
@@ -27,7 +27,7 @@ export class TourRequestService {
   }
 
   async create(ctx: RequestContext, input: CreateTourRequestInput, idempotencyKey: string | null) {
-    const userId = requireFamilyUser(ctx);
+    const userId = requireAuthenticatedUser(ctx);
     const facility = await this.repos.facilities.findPublicById(input.facility_id);
     const result = await this.idempotency.run({
       key: idempotencyKey,
@@ -69,7 +69,7 @@ export class TourRequestService {
   }
 
   async list(ctx: RequestContext) {
-    const userId = requireFamilyUser(ctx);
+    const userId = requireAuthenticatedUser(ctx);
     const tours = await this.repos.tours.listForUser(userId);
     return tours.map(toTourDto);
   }

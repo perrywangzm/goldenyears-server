@@ -6,14 +6,14 @@
 - Router: Hono.
 - Language: TypeScript strict.
 - Validation: Zod at the API boundary and domain-specific validation in services.
-- API contract: REST-style operations over `POST /api/v1/{verb_resource}` with OpenAPI generation.
+- API contract: surface-scoped operations over `POST /api/v1/{surface}/{verb_resource}`, plus the defined auth login/logout paths, with OpenAPI generation.
 - Database: Supabase Postgres in Singapore, accessed through Cloudflare Hyperdrive.
 - Hyperdrive origin: Supabase **session pooler** (`*.pooler.supabase.com:5432`). Do not use transaction pooler (`:6543`) — `pg`/Kysely DB routes hang. See `docs/deployment/environment-variables.md`.
 - SQL layer: Kysely plus SQL migrations.
 - Search: Postgres full-text, trigram indexes, and PostGIS for v1.
 - Media: Cloudflare R2 with private originals and approved public variants.
 - Async: Postgres outbox plus Cloudflare Queues and Cron.
-- Auth: application-owned HTTP-only cookie sessions unless leadership explicitly switches to Supabase Auth.
+- Auth: Supabase Auth for credentials and identity; Golden Years Worker BFF for HTTP-only audience sessions, CSRF, and backend-owned authorization.
 
 ## API Rules
 
@@ -21,7 +21,7 @@ The copied `API_CONVENTIONS.md` in this folder is authoritative.
 
 - All endpoints use `POST` with `application/json`.
 - No path params and no query params.
-- URL shape is `/api/v{N}/{verb}_{resource}`.
+- Canonical URL shape is `/api/v{N}/{surface}/{verb}_{resource}` for `public`, `user`, `partner`, and `admin`, with `/api/v{N}/{surface}/auth/{login|logout|signup|confirm_verification|request_password_reset|confirm_password_reset|resend_verification}` as the functional auth namespace; existing flat paths are compatibility aliases only.
 - Responses are exactly `{ "data": ... }` or `{ "error": ... }`.
 - `filters`, `sort`, `page`, and `fields` use the standard list/search body shape.
 - Auth, tenancy, role, and actor identity are never read from body fields.
@@ -31,7 +31,7 @@ The copied `API_CONVENTIONS.md` in this folder is authoritative.
 
 ## Operation Naming
 
-Use the endpoint name as the OpenAPI `operationId`.
+Use `{surface}_{endpoint}` as the OpenAPI `operationId` for canonical surface routes and `{surface}_auth_{action}` for login/logout. Flat compatibility aliases retain the endpoint name.
 
 Examples:
 
