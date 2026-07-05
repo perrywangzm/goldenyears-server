@@ -168,3 +168,29 @@ The backend does not import React Query, but it is responsible for making React 
 - Keep API interface, application, domain, DB integration, and platform adapter boundaries clean.
 - Stop at each plan's acceptance criteria. Do not silently expand scope.
 - Track implementation notes in sibling `NN-*.progress.md` files.
+
+## Real-API Development Profiles
+
+Use the fully local profile for normal integration work:
+
+```bash
+pnpm install
+pnpm dev:profile:doctor local
+pnpm dev:stack:local
+```
+
+This starts or reuses the pinned Supabase CLI stack, applies `src/db/migrations/*.sql` through Kysely, idempotently imports the mockup fixtures, writes managed gitignored server/client env files, and starts Wrangler plus Vite. Vite is always `http://localhost:5173`; the API is `http://127.0.0.1:8787`. Signup and recovery messages stay on the machine in Mailpit at `http://127.0.0.1:54324`, where the committed templates display the OTP accepted by the UI. `Ctrl-C` stops Wrangler and Vite but leaves Supabase running.
+
+```bash
+pnpm dev:supabase:status
+pnpm dev:supabase:stop       # retain local data
+pnpm dev:supabase:reset      # destructive, local project only; migrate + reseed
+```
+
+For an intentional hosted-boundary run, copy `tools/dev/dev-profiles.local.example.json` to the gitignored `tools/dev/dev-profiles.local.json`, fill the hosted values, then run `pnpm dev:profile:doctor remote` and `pnpm dev:stack:remote`. Hosted mode persists signups, sessions, resets, roles, memberships, and application mutations remotely; it never starts, stops, migrates, resets, or seeds hosted Supabase.
+
+Routine `pnpm test` remains network- and Docker-isolated. Manual `.env.local.local`, `.env.remote.local`, `pnpm dev:local`, and `pnpm dev:remote` workflows remain available. Offline existing-user migration remains separate and requires explicit shell credentials.
+
+Run `pnpm smoke:dev-stack:local` explicitly for the destructive clean-reset smoke harness covering health, seeded database reads, signup email capture, verification, Golden Years session issuance, logout, recovery email capture, password reset, and login with the new password. It is intentionally excluded from routine tests.
+
+Run `pnpm test:dev-orchestration-harness` for the network-free disposable acceptance harness. It creates and removes temporary server/client workspaces, drives the real `devStack` entrypoint through injected lifecycle and foreground-process boundaries, and records exact command, argv, cwd, env-assignment, filesystem, and log evidence for local and remote flows. Its 13 scenarios cover mode switching, zero-side-effect output rejection (including symlink ancestors), tracked script/import-capability wiring and real CLI bootstrap, lifecycle success/failure ordering, poisoned status rejection, force backups, rollback for existing and absent outputs, all required signals, stubborn process cleanup, and partial-spawn cleanup. Four deliberate evidence-validator mutants prove the critical predicates reject remote lifecycle use, frontend secrets, hosted local status, and swallowed exit codes; these are validator mutation checks, not a claim of exhaustive source-level mutation testing.

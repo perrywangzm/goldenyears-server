@@ -29,8 +29,8 @@
         {
           "binding": "HYPERDRIVE",
           "id": "e68c01eb231e4720bb2ebf10cafd758d",
-          // Default local Postgres — override in .env.local.local if needed
-          "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:5432/postgres"
+          // Local Supabase Postgres — the orchestrator also writes this as an env override
+          "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
         }
       ]
     },

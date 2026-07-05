@@ -1,0 +1,20 @@
+{
+	"version": 1,
+	"profiles": {
+		"local": {
+			"kind": "local",
+			"wranglerEnv": "local",
+			"browserOrigin": "http://localhost:5173",
+			"apiOrigin": "http://127.0.0.1:8787"
+		},
+		"remote": {
+			"kind": "remote",
+			"wranglerEnv": "remote",
+			"browserOrigin": "http://localhost:5173",
+			"apiOrigin": "http://127.0.0.1:8787",
+			"supabaseUrl": "${GY_REMOTE_SUPABASE_URL}",
+			"supabasePublishableKey": "${GY_REMOTE_SUPABASE_PUBLISHABLE_KEY}",
+			"databaseConnectionString": "${GY_REMOTE_DATABASE_CONNECTION_STRING}"
+		}
+	}
+}

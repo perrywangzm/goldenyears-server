@@ -1,0 +1,10 @@
+{
+	"version": 1,
+	"profiles": {
+		"remote": {
+			"supabaseUrl": "https://YOUR_PROJECT_REF.supabase.co",
+			"supabasePublishableKey": "YOUR_SB_PUBLISHABLE_KEY",
+			"databaseConnectionString": "postgresql://postgres.YOUR_PROJECT_REF:YOUR_PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+		}
+	}
+}
