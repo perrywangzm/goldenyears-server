@@ -80,19 +80,13 @@ Let TypeScript infer private helpers. Do not invent abstract interfaces with one
 
 ## Claude And Codex Skills
 
-The canonical API convention skill lives at:
+API contract change workflow lives in repo-root codebase intelligence:
 
 ```text
-golden-years-server-next/.claude/skills/golden-years-api-conventions/SKILL.md
+.claude/skills/apply-api-contract-change/SKILL.md
 ```
 
-The Codex-facing path is a symlink:
-
-```text
-golden-years-server-next/.codex/skills/golden-years-api-conventions
-```
-
-Do not create standalone Codex skill files. If a skill is needed by Codex, create or update the Claude skill first, then symlink it into `.codex/skills`.
+Route to it from `backend-codebase-intelligence` and `frontend-codebase-intelligence`. Codex reads the same file via the repo-root `.codex/skills` symlink to `.claude/skills`.
 
 ## Testing Conventions
 

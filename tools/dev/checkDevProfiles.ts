@@ -189,8 +189,23 @@ export async function checkDevProfiles() {
 	};
 	assert(
 		clientPackage.scripts?.dev ===
-			"vite --host localhost --port 5173 --strictPort",
-		"Client dev origin must remain canonical and strict.",
+			"VITE_APP_SURFACE=marketplace vite --host localhost --port 5173 --strictPort",
+		"Marketplace client dev must use its explicit surface on canonical port 5173.",
+	);
+	assert(
+		clientPackage.scripts?.["dev:partners"] ===
+			"VITE_APP_SURFACE=partners vite --host partners.localhost --port 5174 --strictPort",
+		"Partner client dev must use its explicit surface on partners.localhost:5174.",
+	);
+	assert(
+		clientPackage.scripts?.["build:marketplace"] ===
+			"tsc --noEmit && VITE_APP_SURFACE=marketplace vite build",
+		"Marketplace build must pass its explicit surface to Vite.",
+	);
+	assert(
+		clientPackage.scripts?.["build:partners"] ===
+			"tsc --noEmit && VITE_APP_SURFACE=partners vite build",
+		"Partner build must pass its explicit surface to Vite.",
 	);
 	const clientExample = await readFile(
 		path.join(clientRoot, ".env.local.example"),

@@ -181,6 +181,9 @@ async function startStack(
 
 	dependencies.log(profile.banner);
 	dependencies.log(`Browser: ${profile.browserOrigin}`);
+	dependencies.log(
+		"Partner frontend: run pnpm dev:partners separately from golden-years-client-next (http://partners.localhost:5174).",
+	);
 	dependencies.log(`API: ${profile.apiOrigin}`);
 	if (profile.mailpitUrl) dependencies.log(`Mailpit: ${profile.mailpitUrl}`);
 	if (profile.studioUrl) dependencies.log(`Studio: ${profile.studioUrl}`);
@@ -214,6 +217,7 @@ async function startStack(
 				"--strictPort",
 			],
 			cwd: dependencies.clientRoot,
+			env: { ...process.env, VITE_APP_SURFACE: "marketplace" },
 		},
 	]);
 	return exitCode;

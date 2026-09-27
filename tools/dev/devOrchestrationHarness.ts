@@ -57,7 +57,12 @@ type HarnessEvent =
 	| { kind: "lifecycle"; name: string }
 	| {
 			kind: "foreground";
-			specs: Array<{ command: string; args: string[]; cwd: string }>;
+			specs: Array<{
+				command: string;
+				args: string[];
+				cwd: string;
+				appSurface?: string;
+			}>;
 	  }
 	| { kind: "log"; message: string };
 
@@ -219,7 +224,12 @@ function createDependencies(
 		async runForegroundChildren(specs) {
 			events.push({
 				kind: "foreground",
-				specs: specs.map(({ command, args, cwd }) => ({ command, args, cwd })),
+				specs: specs.map(({ command, args, cwd, env }) => ({
+					command,
+					args,
+					cwd,
+					appSurface: env?.VITE_APP_SURFACE,
+				})),
 			});
 			return foregroundExitCode;
 		},
@@ -289,6 +299,7 @@ function expectedForegroundSpecs(
 				"8787",
 			],
 			cwd: evidence.serverRoot,
+			appSurface: undefined,
 		},
 		{
 			command: "pnpm",
@@ -302,6 +313,7 @@ function expectedForegroundSpecs(
 				"--strictPort",
 			],
 			cwd: evidence.clientRoot,
+			appSurface: "marketplace",
 		},
 	];
 }
@@ -347,6 +359,12 @@ function validateRemoteEvidence(evidence: HarnessEvidence) {
 		"Remote client env must contain only Golden Years API configuration.",
 	);
 	const output = logs(evidence.events);
+	check(
+		output.includes(
+			"Partner frontend: run pnpm dev:partners separately from golden-years-client-next (http://partners.localhost:5174).",
+		),
+		"Remote start must identify the separately launched partner frontend.",
+	);
 	check(
 		/REMOTE: hosted Supabase data is persistent/.test(output),
 		"Remote warning must be logged.",
@@ -415,6 +433,12 @@ function validateLocalEvidence(evidence: HarnessEvidence) {
 		"Local evidence must not contain a hosted Supabase hostname.",
 	);
 	const output = logs(evidence.events);
+	check(
+		output.includes(
+			"Partner frontend: run pnpm dev:partners separately from golden-years-client-next (http://partners.localhost:5174).",
+		),
+		"Local start must identify the separately launched partner frontend.",
+	);
 	for (const secret of [
 		localStatus.publishableKey,
 		localStatus.serviceRoleKey,

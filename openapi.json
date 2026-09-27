@@ -796,6 +796,1647 @@
         ],
         "additionalProperties": false
       },
+      "PartnerGetFacilityManagerDashboardResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerFacilityManagerDashboard"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerFacilityManagerDashboard": {
+        "type": "object",
+        "properties": {
+          "facility": {
+            "$ref": "#/components/schemas/PartnerFacilitySummary"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/PartnerPermissions"
+          },
+          "editable_fields": {
+            "$ref": "#/components/schemas/PartnerListingEditableFields"
+          },
+          "locked_fields": {
+            "$ref": "#/components/schemas/PartnerListingLockedFields"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/PartnerFacilityAvailability"
+          },
+          "tour_availability": {
+            "$ref": "#/components/schemas/PartnerTourAvailability"
+          },
+          "tour_summary": {
+            "$ref": "#/components/schemas/PartnerTourSummary"
+          },
+          "recent_tour_requests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerTourRequest"
+            }
+          },
+          "recent_edits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerAuditEvent"
+            }
+          },
+          "reference_data": {
+            "$ref": "#/components/schemas/PartnerReferenceData"
+          }
+        },
+        "required": [
+          "facility",
+          "permissions",
+          "editable_fields",
+          "locked_fields",
+          "availability",
+          "tour_availability",
+          "tour_summary",
+          "recent_tour_requests",
+          "recent_edits",
+          "reference_data"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerFacilitySummary": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PartnerManagedFacility"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "tagline": {
+                "type": "string"
+              },
+              "image_url": {
+                "type": "string"
+              },
+              "care_types": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "region_id": {
+                "type": "string"
+              },
+              "district": {
+                "type": "string"
+              },
+              "rating": {
+                "type": "number"
+              },
+              "review_count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "tagline",
+              "image_url",
+              "care_types",
+              "region_id",
+              "district",
+              "rating",
+              "review_count"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "PartnerPermissions": {
+        "type": "object",
+        "properties": {
+          "can_edit_listing": {
+            "type": "boolean"
+          },
+          "can_update_availability": {
+            "type": "boolean"
+          },
+          "can_update_tour_availability": {
+            "type": "boolean"
+          },
+          "can_manage_tours": {
+            "type": "boolean"
+          },
+          "can_respond_to_reviews": {
+            "type": "boolean"
+          },
+          "can_flag_reviews": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "can_edit_listing",
+          "can_update_availability",
+          "can_update_tour_availability",
+          "can_manage_tours",
+          "can_respond_to_reviews",
+          "can_flag_reviews"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerListingEditableFields": {
+        "type": "object",
+        "properties": {
+          "tagline": {
+            "type": "string"
+          },
+          "about": {
+            "type": "string"
+          },
+          "highlights": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "right_for_you_if": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "tagline",
+          "about",
+          "highlights",
+          "right_for_you_if",
+          "features",
+          "languages"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerListingLockedFields": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "licence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "year_opened": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "capacity": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "address": {
+            "type": "string"
+          },
+          "postal_code": {
+            "type": "string"
+          },
+          "district": {
+            "type": "string"
+          },
+          "region_id": {
+            "type": "string"
+          },
+          "care_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "price_from": {
+            "type": "number"
+          },
+          "price_unit": {
+            "type": "string",
+            "enum": [
+              "month",
+              "day"
+            ]
+          },
+          "rating": {
+            "type": "number"
+          },
+          "review_count": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "approved",
+              "rejected",
+              "disabled",
+              "removed"
+            ]
+          },
+          "is_enabled": {
+            "type": "boolean"
+          },
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "licence",
+          "year_opened",
+          "capacity",
+          "address",
+          "postal_code",
+          "district",
+          "region_id",
+          "care_types",
+          "price_from",
+          "price_unit",
+          "rating",
+          "review_count",
+          "status",
+          "is_enabled",
+          "slug"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerFacilityAvailability": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "limited",
+              "waitlist",
+              "unavailable",
+              "full"
+            ]
+          },
+          "beds_available": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "beds_available",
+          "note",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerTourAvailability": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "limited",
+              "unavailable"
+            ]
+          },
+          "timezone": {
+            "type": "string",
+            "enum": [
+              "Asia/Singapore"
+            ]
+          },
+          "weekly_windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerTourAvailabilityWindow"
+            }
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerTourAvailabilityException"
+            }
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "timezone",
+          "weekly_windows",
+          "exceptions",
+          "notes",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerTourAvailabilityWindow": {
+        "type": "object",
+        "properties": {
+          "day_of_week": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "start_time": {
+            "type": "string",
+            "minLength": 1
+          },
+          "end_time": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "day_of_week",
+          "start_time",
+          "end_time"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerTourAvailabilityException": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "limited",
+              "unavailable"
+            ]
+          },
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerTourAvailabilityWindow"
+            }
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "date",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerTourSummary": {
+        "type": "object",
+        "properties": {
+          "pending_review": {
+            "type": "integer"
+          },
+          "confirmed": {
+            "type": "integer"
+          },
+          "attended": {
+            "type": "integer"
+          },
+          "no_show": {
+            "type": "integer"
+          },
+          "declined": {
+            "type": "integer"
+          },
+          "cancelled": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "pending_review",
+          "confirmed",
+          "attended",
+          "no_show",
+          "declined",
+          "cancelled"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerTourRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "facility_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_review",
+              "confirmed",
+              "declined",
+              "attended",
+              "no_show",
+              "cancelled"
+            ]
+          },
+          "contact_name": {
+            "type": "string"
+          },
+          "contact_phone": {
+            "type": "string"
+          },
+          "contact_email": {
+            "type": "string"
+          },
+          "preferred_date": {
+            "type": "string"
+          },
+          "preferred_time": {
+            "type": "string"
+          },
+          "care_notes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "scheduled_date": {
+            "type": "string"
+          },
+          "scheduled_time": {
+            "type": "string"
+          },
+          "partner_message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "facility_id",
+          "status",
+          "contact_name",
+          "contact_phone",
+          "contact_email",
+          "preferred_date",
+          "preferred_time",
+          "care_notes",
+          "version",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerAuditEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "resource_type": {
+            "type": "string"
+          },
+          "resource_id": {
+            "type": "string"
+          },
+          "metadata": {},
+          "created_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "action",
+          "resource_type",
+          "resource_id",
+          "created_at"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerReferenceData": {
+        "type": "object",
+        "properties": {
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "features",
+          "languages"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerGetFacilityManagerDashboardRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "facility_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerListFacilityTourRequestsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerTourRequest"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/OffsetPageResponse"
+          }
+        },
+        "required": [
+          "data",
+          "page"
+        ]
+      },
+      "PartnerListFacilityTourRequestsRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "pending_review",
+                "confirmed",
+                "declined",
+                "attended",
+                "no_show",
+                "cancelled"
+              ]
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/OffsetPageRequest"
+          }
+        },
+        "required": [
+          "facility_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerListFacilityReviewsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerReview"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/OffsetPageResponse"
+          }
+        },
+        "required": [
+          "data",
+          "page"
+        ]
+      },
+      "PartnerReview": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "facility_id": {
+            "type": "string"
+          },
+          "author_name": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "review_date": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "published",
+              "hidden"
+            ]
+          },
+          "version": {
+            "type": "integer"
+          },
+          "response": {
+            "$ref": "#/components/schemas/PartnerReviewResponse"
+          },
+          "flags": {
+            "$ref": "#/components/schemas/PartnerReviewFlagSummary"
+          }
+        },
+        "required": [
+          "id",
+          "facility_id",
+          "author_name",
+          "relationship",
+          "rating",
+          "title",
+          "body",
+          "review_date",
+          "verified",
+          "status",
+          "version",
+          "response",
+          "flags"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerReviewResponse": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "review_id": {
+            "type": "string"
+          },
+          "facility_id": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "published",
+              "removed"
+            ]
+          },
+          "version": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "review_id",
+          "facility_id",
+          "body",
+          "status",
+          "version",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerReviewFlagSummary": {
+        "type": "object",
+        "properties": {
+          "pending_count": {
+            "type": "integer"
+          },
+          "current_user_pending": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "pending_count",
+          "current_user_pending"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerListFacilityReviewsRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "published",
+                "hidden"
+              ]
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/OffsetPageRequest"
+          }
+        },
+        "required": [
+          "facility_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerGetFacilityAnalyticsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerFacilityAnalytics"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerFacilityAnalytics": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string"
+          },
+          "period": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "to": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "review_count": {
+                "type": "integer"
+              },
+              "average_rating": {
+                "type": "number"
+              },
+              "pending_tour_requests": {
+                "type": "integer"
+              },
+              "confirmed_tour_requests": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "review_count",
+              "average_rating",
+              "pending_tour_requests",
+              "confirmed_tour_requests"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "facility_id",
+          "period",
+          "metrics"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerGetFacilityAnalyticsRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "facility_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerListFacilityAuditEventsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerAuditEvent"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/OffsetPageResponse"
+          }
+        },
+        "required": [
+          "data",
+          "page"
+        ]
+      },
+      "PartnerListFacilityAuditEventsRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/OffsetPageRequest"
+          }
+        },
+        "required": [
+          "facility_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerUpdateFacilityAvailabilityResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerUpdateFacilityAvailabilityResponseData"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerUpdateFacilityAvailabilityResponseData": {
+        "type": "object",
+        "properties": {
+          "facility": {
+            "$ref": "#/components/schemas/PartnerFacilitySummary"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/PartnerFacilityAvailability"
+          }
+        },
+        "required": [
+          "facility",
+          "availability"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerUpdateFacilityAvailabilityRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "availability": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "available",
+                  "limited",
+                  "waitlist",
+                  "unavailable",
+                  "full"
+                ]
+              },
+              "beds_available": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 1000
+              }
+            },
+            "required": [
+              "status",
+              "beds_available",
+              "note"
+            ],
+            "additionalProperties": false
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "facility_id",
+          "availability"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerUpdateFacilityTourAvailabilityResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerUpdateFacilityTourAvailabilityResponseData"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerUpdateFacilityTourAvailabilityResponseData": {
+        "type": "object",
+        "properties": {
+          "facility": {
+            "$ref": "#/components/schemas/PartnerFacilitySummary"
+          },
+          "tour_availability": {
+            "$ref": "#/components/schemas/PartnerTourAvailability"
+          }
+        },
+        "required": [
+          "facility",
+          "tour_availability"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerUpdateFacilityTourAvailabilityRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tour_availability": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "available",
+                  "limited",
+                  "unavailable"
+                ]
+              },
+              "timezone": {
+                "type": "string",
+                "enum": [
+                  "Asia/Singapore"
+                ]
+              },
+              "weekly_windows": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PartnerTourAvailabilityWindow"
+                }
+              },
+              "exceptions": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PartnerTourAvailabilityException"
+                }
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 1000
+              }
+            },
+            "required": [
+              "status",
+              "timezone",
+              "weekly_windows",
+              "exceptions",
+              "notes"
+            ],
+            "additionalProperties": false
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "facility_id",
+          "tour_availability"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerUpdateFacilityManagerListingFieldsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerUpdateFacilityManagerListingFieldsResponseData"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerUpdateFacilityManagerListingFieldsResponseData": {
+        "type": "object",
+        "properties": {
+          "facility": {
+            "$ref": "#/components/schemas/PartnerFacilitySummary"
+          },
+          "editable_fields": {
+            "$ref": "#/components/schemas/PartnerListingEditableFields"
+          }
+        },
+        "required": [
+          "facility",
+          "editable_fields"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerUpdateFacilityManagerListingFieldsRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "patch": {
+            "type": "object",
+            "properties": {
+              "tagline": {
+                "type": "string"
+              },
+              "about": {
+                "type": "string"
+              },
+              "highlights": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "right_for_you_if": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "features": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "languages": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "facility_id",
+          "patch"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerCreateTourRequestConfirmationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerTourRequest"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerCreateTourRequestConfirmationRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tour_request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "scheduled_date": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scheduled_time": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "facility_id",
+          "tour_request_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerCreateTourRequestDeclineResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerTourRequest"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerCreateTourRequestDeclineRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tour_request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "facility_id",
+          "tour_request_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerCreateTourRequestAttendanceResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerTourRequest"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerCreateTourRequestAttendanceRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tour_request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "attended_at": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "facility_id",
+          "tour_request_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerCreateTourRequestNoShowResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerTourRequest"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerCreateTourRequestNoShowRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tour_request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "facility_id",
+          "tour_request_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerCreateTourRequestCancellationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerTourRequest"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerCreateTourRequestCancellationRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tour_request_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "facility_id",
+          "tour_request_id"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerCreateFacilityReviewResponseResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerReview"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerCreateFacilityReviewResponseRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "review_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          }
+        },
+        "required": [
+          "facility_id",
+          "review_id",
+          "body"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerUpdateFacilityReviewResponseResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerReview"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerUpdateFacilityReviewResponseRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "review_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "expected_version": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "facility_id",
+          "review_id",
+          "body"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerCreateReviewFlagResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PartnerReviewFlag"
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "PartnerReviewFlag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "review_id": {
+            "type": "string"
+          },
+          "facility_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "inaccurate_info",
+              "inappropriate_content",
+              "privacy_concern",
+              "spam",
+              "other"
+            ]
+          },
+          "details": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "rejected",
+              "cancelled"
+            ]
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "review_id",
+          "facility_id",
+          "reason",
+          "details",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      },
+      "PartnerCreateReviewFlagRequest": {
+        "type": "object",
+        "properties": {
+          "facility_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "review_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "inaccurate_info",
+              "inappropriate_content",
+              "privacy_concern",
+              "spam",
+              "other"
+            ]
+          },
+          "details": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "facility_id",
+          "review_id",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
       "AdminGetMeResponse": {
         "type": "object",
         "properties": {
@@ -3584,6 +5225,26 @@
               }
             }
           },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation failed.",
             "content": {
@@ -3650,6 +5311,26 @@
           },
           "403": {
             "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3728,6 +5409,26 @@
               }
             }
           },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation failed.",
             "content": {
@@ -3790,6 +5491,1608 @@
           },
           "403": {
             "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/get_facility_manager_dashboard": {
+      "post": {
+        "operationId": "partner_get_facility_manager_dashboard",
+        "tags": [
+          "partner"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerGetFacilityManagerDashboardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerGetFacilityManagerDashboardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/list_facility_tour_requests": {
+      "post": {
+        "operationId": "partner_list_facility_tour_requests",
+        "tags": [
+          "partner"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerListFacilityTourRequestsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerListFacilityTourRequestsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/list_facility_reviews": {
+      "post": {
+        "operationId": "partner_list_facility_reviews",
+        "tags": [
+          "partner"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerListFacilityReviewsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerListFacilityReviewsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/get_facility_analytics": {
+      "post": {
+        "operationId": "partner_get_facility_analytics",
+        "tags": [
+          "partner"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerGetFacilityAnalyticsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerGetFacilityAnalyticsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/list_facility_audit_events": {
+      "post": {
+        "operationId": "partner_list_facility_audit_events",
+        "tags": [
+          "partner"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerListFacilityAuditEventsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerListFacilityAuditEventsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/update_facility_availability": {
+      "post": {
+        "operationId": "partner_update_facility_availability",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "facility",
+          "partner_dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerUpdateFacilityAvailabilityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerUpdateFacilityAvailabilityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/update_facility_tour_availability": {
+      "post": {
+        "operationId": "partner_update_facility_tour_availability",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "facility",
+          "tour_availability",
+          "partner_dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerUpdateFacilityTourAvailabilityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerUpdateFacilityTourAvailabilityResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/update_facility_manager_listing_fields": {
+      "post": {
+        "operationId": "partner_update_facility_manager_listing_fields",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "facility",
+          "partner_dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerUpdateFacilityManagerListingFieldsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerUpdateFacilityManagerListingFieldsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/create_tour_request_confirmation": {
+      "post": {
+        "operationId": "partner_create_tour_request_confirmation",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "tour_request",
+          "partner_dashboard",
+          "notification"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerCreateTourRequestConfirmationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerCreateTourRequestConfirmationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/create_tour_request_decline": {
+      "post": {
+        "operationId": "partner_create_tour_request_decline",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "tour_request",
+          "partner_dashboard",
+          "notification"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerCreateTourRequestDeclineRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerCreateTourRequestDeclineResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/create_tour_request_attendance": {
+      "post": {
+        "operationId": "partner_create_tour_request_attendance",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "tour_request",
+          "partner_dashboard",
+          "notification"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerCreateTourRequestAttendanceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerCreateTourRequestAttendanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/create_tour_request_no_show": {
+      "post": {
+        "operationId": "partner_create_tour_request_no_show",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "tour_request",
+          "partner_dashboard",
+          "notification"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerCreateTourRequestNoShowRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerCreateTourRequestNoShowResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/create_tour_request_cancellation": {
+      "post": {
+        "operationId": "partner_create_tour_request_cancellation",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "tour_request",
+          "partner_dashboard",
+          "notification"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerCreateTourRequestCancellationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerCreateTourRequestCancellationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/create_facility_review_response": {
+      "post": {
+        "operationId": "partner_create_facility_review_response",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "review",
+          "partner_dashboard",
+          "notification"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerCreateFacilityReviewResponseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerCreateFacilityReviewResponseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/update_facility_review_response": {
+      "post": {
+        "operationId": "partner_update_facility_review_response",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "review",
+          "partner_dashboard",
+          "notification"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerUpdateFacilityReviewResponseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerUpdateFacilityReviewResponseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/partner/create_review_flag": {
+      "post": {
+        "operationId": "partner_create_review_flag",
+        "tags": [
+          "partner"
+        ],
+        "x-goldenyears-invalidates": [
+          "review",
+          "review_flag",
+          "partner_dashboard",
+          "notification"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "required": false,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerCreateReviewFlagRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerCreateReviewFlagResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict.",
             "content": {
               "application/json": {
                 "schema": {

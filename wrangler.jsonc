@@ -14,7 +14,7 @@
     }
   ],
   "vars": {
-    "CORS_ORIGIN": "https://goldenyears.asia,https://www.goldenyears.asia,https://golden-years-client-next.pages.dev",
+    "CORS_ORIGIN": "https://goldenyears.asia,https://www.goldenyears.asia,https://partners.goldenyears.asia,https://golden-years-client-next.pages.dev,https://golden-years-client-partners.pages.dev",
     "SUPABASE_URL": "https://vocnhmoigfqybjhqyatx.supabase.co",
     "SUPABASE_AUTH_REDIRECT_URL": "https://www.goldenyears.asia/login",
     "SUPABASE_RUNTIME_EMAIL_LINKING": "false",

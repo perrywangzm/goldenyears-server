@@ -16,6 +16,7 @@ import { TourRepository } from "./tourRepository";
 import { UserRepository } from "./userRepository";
 
 export { createAsyncInMemoryRepositories, getInMemoryStore, type InMemoryStore } from "./asyncInMemoryRepositories";
+export { createInMemoryTransactionRunner } from "./inMemoryStore";
 export { createKyselyRepositories } from "./kyselyRepositories";
 export type { Repositories } from "./ports";
 

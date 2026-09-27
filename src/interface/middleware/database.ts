@@ -5,6 +5,7 @@ import { openAppDatabase } from "@/db/createAppDatabase";
 export const databaseMiddleware = createMiddleware<AppBindings>(async (c, next) => {
   const scope = openAppDatabase(c.env);
   c.set("repos", scope.repos);
+  c.set("transactionRunner", scope.transactionRunner);
   try {
     await next();
   } finally {

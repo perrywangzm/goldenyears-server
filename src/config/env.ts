@@ -25,6 +25,7 @@ export type AppBindings = {
     requestId: string;
     actor: import("@/shared/request-context/context").ActorContext;
     repos: import("@/db/repositories/ports").Repositories;
+    transactionRunner: import("@/shared/transactions/transactionRunner").TransactionRunner;
     supabaseAuth?: import("@/platform/auth/supabaseAuthPort").SupabaseAuthPort;
   };
 };

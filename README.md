@@ -179,7 +179,15 @@ pnpm dev:profile:doctor local
 pnpm dev:stack:local
 ```
 
-This starts or reuses the pinned Supabase CLI stack, applies `src/db/migrations/*.sql` through Kysely, idempotently imports the mockup fixtures, writes managed gitignored server/client env files, and starts Wrangler plus Vite. Vite is always `http://localhost:5173`; the API is `http://127.0.0.1:8787`. Signup and recovery messages stay on the machine in Mailpit at `http://127.0.0.1:54324`, where the committed templates display the OTP accepted by the UI. `Ctrl-C` stops Wrangler and Vite but leaves Supabase running.
+This starts or reuses the pinned Supabase CLI stack, applies `src/db/migrations/*.sql` through Kysely, idempotently imports the mockup fixtures, writes managed gitignored server/client env files, and starts Wrangler plus the marketplace Vite surface. Marketplace Vite is always `http://localhost:5173`; the API is `http://127.0.0.1:8787`. Signup and recovery messages stay on the machine in Mailpit at `http://127.0.0.1:54324`, where the committed templates display the OTP accepted by the UI. `Ctrl-C` stops Wrangler and Vite but leaves Supabase running.
+
+For partner frontend work, add `127.0.0.1 partners.localhost` to `/etc/hosts` once, then launch the partner surface separately from `golden-years-client-next`:
+
+```bash
+pnpm dev:partners
+```
+
+The partner frontend runs at `http://partners.localhost:5174`. `pnpm dev:stack:local` and `pnpm dev:stack:remote` remain marketplace-only on `http://localhost:5173`; they never select a surface from the parent shell environment.
 
 ```bash
 pnpm dev:supabase:status

@@ -1,233 +1,293 @@
-import type { ColumnType, Generated, Insertable, Selectable, Updateable } from "kysely";
+import type {
+	ColumnType,
+	Generated,
+	Insertable,
+	Selectable,
+	Updateable,
+} from "kysely";
 import type { AssessmentResultsTable } from "@/db/schema/assessmentTypes";
 import type { SessionAudience } from "@/shared/authz/sessionAudience";
 
-export type Timestamp = ColumnType<Date, Date | string | undefined, Date | string>;
+export type Timestamp = ColumnType<
+	Date,
+	Date | string | undefined,
+	Date | string
+>;
 
 export interface UsersTable {
-  id: string;
-  auth_user_id: string | null;
-  email: string;
-  display_name: string;
-  password_hash: string | null;
-  status: "active" | "disabled";
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	id: string;
+	auth_user_id: string | null;
+	email: string;
+	display_name: string;
+	password_hash: string | null;
+	status: "active" | "disabled";
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface SessionsTable {
-  id: string;
-  user_id: string;
-  token_hash: string;
-  audience: SessionAudience;
-  expires_at: Timestamp;
-  created_at: Timestamp;
-  revoked_at: Timestamp | null;
+	id: string;
+	user_id: string;
+	token_hash: string;
+	audience: SessionAudience;
+	expires_at: Timestamp;
+	created_at: Timestamp;
+	revoked_at: Timestamp | null;
 }
 
 export interface CompaniesTable {
-  id: string;
-  name: string;
-  status: "active" | "disabled";
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	id: string;
+	name: string;
+	status: "active" | "disabled";
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface CompanyUsersTable {
-  company_id: string;
-  user_id: string;
-  status: "active" | "disabled";
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	company_id: string;
+	user_id: string;
+	status: "active" | "disabled";
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface FacilitiesTable {
-  id: string;
-  company_id: string | null;
-  slug: string;
-  name: string;
-  tagline: string;
-  status: "draft" | "approved" | "rejected" | "disabled" | "removed";
-  is_enabled: boolean;
-  care_types: string[];
-  region_id: string;
-  district: string;
-  address: string;
-  postal_code: string;
-  price_from: number;
-  price_unit: "month" | "day";
-  rating: number;
-  review_count: number;
-  image_url: string;
-  gallery_urls: string[];
-  features: string[];
-  languages: string[];
-  capacity: number | null;
-  year_opened: number | null;
-  licence: string | null;
-  about: string;
-  highlights: string[];
-  right_for_you_if: string[];
-  latitude: number | null;
-  longitude: number | null;
-  availability_status: "available" | "limited" | "waitlist" | "unavailable" | "full";
-  beds_available: number | null;
-  availability_note: string | null;
-  availability_updated_at: Timestamp | null;
-  provider_contact_email: string | null;
-  admin_notes: string | null;
-  moderation_state: string | null;
-  version: number;
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	id: string;
+	company_id: string | null;
+	slug: string;
+	name: string;
+	tagline: string;
+	status: "draft" | "approved" | "rejected" | "disabled" | "removed";
+	is_enabled: boolean;
+	care_types: string[];
+	region_id: string;
+	district: string;
+	address: string;
+	postal_code: string;
+	price_from: number;
+	price_unit: "month" | "day";
+	rating: number;
+	review_count: number;
+	image_url: string;
+	gallery_urls: string[];
+	features: string[];
+	languages: string[];
+	capacity: number | null;
+	year_opened: number | null;
+	licence: string | null;
+	about: string;
+	highlights: string[];
+	right_for_you_if: string[];
+	latitude: number | null;
+	longitude: number | null;
+	availability_status:
+		| "available"
+		| "limited"
+		| "waitlist"
+		| "unavailable"
+		| "full";
+	beds_available: number | null;
+	availability_note: string | null;
+	availability_updated_at: Timestamp | null;
+	tour_availability: unknown;
+	tour_availability_updated_at: Timestamp | null;
+	provider_contact_email: string | null;
+	admin_notes: string | null;
+	moderation_state: string | null;
+	version: number;
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface RolesTable {
-  id: string;
-  name: string;
-  description: string;
-  created_at: Timestamp;
+	id: string;
+	name: string;
+	description: string;
+	created_at: Timestamp;
 }
 
 export interface UserRolesTable {
-  user_id: string;
-  role_id: string;
-  created_at: Timestamp;
+	user_id: string;
+	role_id: string;
+	created_at: Timestamp;
 }
 
 export interface FacilityMembershipsTable {
-  id: Generated<string>;
-  facility_id: string;
-  user_id: string;
-  role: "owner" | "manager" | "staff";
-  status: "active" | "disabled";
-  created_at: Timestamp;
+	id: Generated<string>;
+	facility_id: string;
+	user_id: string;
+	role: "owner" | "manager" | "staff";
+	status: "active" | "disabled";
+	created_at: Timestamp;
 }
 
 export interface ListingSubmissionsTable {
-  id: Generated<string>;
-  company_id: string | null;
-  facility_id: string | null;
-  submitter_user_id: string | null;
-  status: "draft" | "submitted" | "approved" | "rejected" | "withdrawn";
-  payload: unknown;
-  version: number;
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	id: Generated<string>;
+	company_id: string | null;
+	facility_id: string | null;
+	submitter_user_id: string | null;
+	status: "draft" | "submitted" | "approved" | "rejected" | "withdrawn";
+	payload: unknown;
+	version: number;
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface ReviewsTable {
-  id: string;
-  facility_id: string;
-  author_name: string;
-  relationship: string;
-  rating: number;
-  title: string;
-  body: string;
-  review_date: string;
-  verified: boolean;
-  status: "published" | "hidden";
-  version: number;
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	id: string;
+	facility_id: string;
+	author_name: string;
+	relationship: string;
+	rating: number;
+	title: string;
+	body: string;
+	review_date: string;
+	verified: boolean;
+	status: "published" | "hidden";
+	version: number;
+	created_at: Timestamp;
+	updated_at: Timestamp;
+}
+
+export interface ReviewResponsesTable {
+	id: Generated<string>;
+	review_id: string;
+	facility_id: string;
+	responder_user_id: string | null;
+	body: string;
+	status: "published" | "removed";
+	version: number;
+	created_at: Timestamp;
+	updated_at: Timestamp;
+}
+
+export interface ReviewFlagsTable {
+	id: Generated<string>;
+	review_id: string;
+	facility_id: string;
+	flagged_by_user_id: string | null;
+	reason:
+		| "inaccurate_info"
+		| "inappropriate_content"
+		| "privacy_concern"
+		| "spam"
+		| "other";
+	details: string | null;
+	status: "pending" | "accepted" | "rejected" | "cancelled";
+	resolver_user_id: string | null;
+	resolution_note: string | null;
+	resolved_at: Timestamp | null;
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface SavedFacilitiesTable {
-  id: Generated<string>;
-  user_id: string;
-  facility_id: string;
-  created_at: Timestamp;
+	id: Generated<string>;
+	user_id: string;
+	facility_id: string;
+	created_at: Timestamp;
 }
 
 export interface TourRequestsTable {
-  id: string;
-  user_id: string;
-  facility_id: string;
-  status: "pending_review" | "confirmed" | "declined" | "attended" | "no_show" | "cancelled";
-  contact_name: string;
-  contact_phone: string;
-  contact_email: string;
-  preferred_date: string;
-  preferred_time: string;
-  care_notes: string | null;
-  version: number;
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	id: string;
+	user_id: string;
+	facility_id: string;
+	status:
+		| "pending_review"
+		| "confirmed"
+		| "declined"
+		| "attended"
+		| "no_show"
+		| "cancelled";
+	contact_name: string;
+	contact_phone: string;
+	contact_email: string;
+	preferred_date: string;
+	preferred_time: string;
+	care_notes: string | null;
+	scheduled_date: string | null;
+	scheduled_time: string | null;
+	partner_message: string | null;
+	version: number;
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface AuditEventsTable {
-  id: string;
-  actor_user_id: string | null;
-  action: string;
-  resource_type: string;
-  resource_id: string;
-  metadata: unknown;
-  created_at: Timestamp;
+	id: string;
+	actor_user_id: string | null;
+	action: string;
+	resource_type: string;
+	resource_id: string;
+	metadata: unknown;
+	created_at: Timestamp;
 }
 
 export interface OutboxEventsTable {
-  id: string;
-  event_type: string;
-  aggregate_type: string;
-  aggregate_id: string;
-  payload: unknown;
-  status: "pending" | "sent" | "failed";
-  attempts: number;
-  next_attempt_at: Timestamp;
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	id: string;
+	event_type: string;
+	aggregate_type: string;
+	aggregate_id: string;
+	payload: unknown;
+	status: "pending" | "sent" | "failed";
+	attempts: number;
+	next_attempt_at: Timestamp;
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface IdempotencyKeysTable {
-  key: string;
-  user_id: string | null;
-  request_hash: string;
-  response_status: number;
-  response_body: unknown;
-  expires_at: Timestamp;
-  created_at: Timestamp;
+	key: string;
+	user_id: string | null;
+	request_hash: string;
+	response_status: number;
+	response_body: unknown;
+	expires_at: Timestamp;
+	created_at: Timestamp;
 }
 
 export interface ReferenceItemsTable {
-  id: string;
-  kind: "care_type" | "feature" | "language" | "region";
-  name: string;
-  metadata: unknown;
-  sort_order: number;
-  created_at: Timestamp;
-  updated_at: Timestamp;
+	id: string;
+	kind: "care_type" | "feature" | "language" | "region";
+	name: string;
+	metadata: unknown;
+	sort_order: number;
+	created_at: Timestamp;
+	updated_at: Timestamp;
 }
 
 export interface ArticlesTable {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  body: string;
-  category: string;
-  status: "published" | "draft";
-  published_at: Timestamp;
+	id: string;
+	slug: string;
+	title: string;
+	excerpt: string;
+	body: string;
+	category: string;
+	status: "published" | "draft";
+	published_at: Timestamp;
 }
 
 export interface Database {
-  users: UsersTable;
-  sessions: SessionsTable;
-  companies: CompaniesTable;
-  company_users: CompanyUsersTable;
-  roles: RolesTable;
-  user_roles: UserRolesTable;
-  facilities: FacilitiesTable;
-  facility_memberships: FacilityMembershipsTable;
-  listing_submissions: ListingSubmissionsTable;
-  reviews: ReviewsTable;
-  saved_facilities: SavedFacilitiesTable;
-  tour_requests: TourRequestsTable;
-  audit_events: AuditEventsTable;
-  outbox_events: OutboxEventsTable;
-  idempotency_keys: IdempotencyKeysTable;
-  reference_items: ReferenceItemsTable;
-  articles: ArticlesTable;
-  assessment_results: AssessmentResultsTable;
+	users: UsersTable;
+	sessions: SessionsTable;
+	companies: CompaniesTable;
+	company_users: CompanyUsersTable;
+	roles: RolesTable;
+	user_roles: UserRolesTable;
+	facilities: FacilitiesTable;
+	facility_memberships: FacilityMembershipsTable;
+	listing_submissions: ListingSubmissionsTable;
+	reviews: ReviewsTable;
+	review_responses: ReviewResponsesTable;
+	review_flags: ReviewFlagsTable;
+	saved_facilities: SavedFacilitiesTable;
+	tour_requests: TourRequestsTable;
+	audit_events: AuditEventsTable;
+	outbox_events: OutboxEventsTable;
+	idempotency_keys: IdempotencyKeysTable;
+	reference_items: ReferenceItemsTable;
+	articles: ArticlesTable;
+	assessment_results: AssessmentResultsTable;
 }
 
 export type FacilityRow = Selectable<FacilitiesTable>;
@@ -235,6 +295,12 @@ export type NewFacilityRow = Insertable<FacilitiesTable>;
 export type FacilityUpdate = Updateable<FacilitiesTable>;
 export type ReviewRow = Selectable<ReviewsTable>;
 export type NewReviewRow = Insertable<ReviewsTable>;
+export type ReviewResponseRow = Selectable<ReviewResponsesTable>;
+export type NewReviewResponseRow = Insertable<ReviewResponsesTable>;
+export type ReviewResponseUpdate = Updateable<ReviewResponsesTable>;
+export type ReviewFlagRow = Selectable<ReviewFlagsTable>;
+export type NewReviewFlagRow = Insertable<ReviewFlagsTable>;
+export type ReviewFlagUpdate = Updateable<ReviewFlagsTable>;
 export type UserRow = Selectable<UsersTable>;
 export type SessionRow = Selectable<SessionsTable>;
 export type CompanyRow = Selectable<CompaniesTable>;
