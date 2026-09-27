@@ -202,3 +202,39 @@ Routine `pnpm test` remains network- and Docker-isolated. Manual `.env.local.loc
 Run `pnpm smoke:dev-stack:local` explicitly for the destructive clean-reset smoke harness covering health, seeded database reads, signup email capture, verification, Golden Years session issuance, logout, recovery email capture, password reset, and login with the new password. It is intentionally excluded from routine tests.
 
 Run `pnpm test:dev-orchestration-harness` for the network-free disposable acceptance harness. It creates and removes temporary server/client workspaces, drives the real `devStack` entrypoint through injected lifecycle and foreground-process boundaries, and records exact command, argv, cwd, env-assignment, filesystem, and log evidence for local and remote flows. Its 13 scenarios cover mode switching, zero-side-effect output rejection (including symlink ancestors), tracked script/import-capability wiring and real CLI bootstrap, lifecycle success/failure ordering, poisoned status rejection, force backups, rollback for existing and absent outputs, all required signals, stubborn process cleanup, and partial-spawn cleanup. Four deliberate evidence-validator mutants prove the critical predicates reject remote lifecycle use, frontend secrets, hosted local status, and swallowed exit codes; these are validator mutation checks, not a claim of exhaustive source-level mutation testing.
+
+## Cloudflare release: partner portal
+
+The partner portal is a separate Cloudflare Pages deployment from the marketplace, while both frontends share this Worker API:
+
+| Surface | Pages project | Build artifact | Production hostname |
+|---|---|---|---|
+| Marketplace | `golden-years-client-next` | `dist-marketplace/` | `goldenyears.asia`, `www.goldenyears.asia` |
+| Partner | `golden-years-client-partners` | `dist-partners/` | `partners.goldenyears.asia` |
+| API | Worker `golden-years-api-next` | `src/entrypoints/http.ts` | Zone Worker Route `*.goldenyears.asia/api/*` |
+
+Deploy the database schema and Worker before the partner Pages surface:
+
+```bash
+# In golden-years-server-next; DATABASE_URL must be the direct Supabase URI.
+pnpm db:migrate
+pnpm build
+pnpm run deploy
+```
+
+The Worker deploy publishes the API routes and `CORS_ORIGIN` values from `wrangler.jsonc`. Production Hyperdrive uses the Supabase session pooler on port `5432`; never place the database URI in Worker or Pages variables.
+
+Then, from `golden-years-client-next`, create the Pages project if absent and deploy only the partner artifact:
+
+```bash
+wrangler login --browser=false
+wrangler pages project list
+wrangler pages project create golden-years-client-partners --production-branch=main
+
+VITE_API_BASE_URL=/api/v1 pnpm build:partners
+wrangler pages deploy dist-partners --project-name=golden-years-client-partners --branch=main
+```
+
+When logging in, open the full OAuth URL Wrangler prints in a browser. If the project already exists, skip the create command. Configure its build root as the client repository root and publish directory as `dist-partners/`; the marketplace project separately uses `pnpm build:marketplace` and `dist-marketplace/`. Connect Git integration to each Pages project only if push-triggered builds are wanted. This workspace has no GitHub Actions deployment workflow, and pushing `main` does not deploy this Worker.
+
+Before public launch, attach `partners.goldenyears.asia` to the partner Pages project in the Cloudflare dashboard, confirm DNS resolves and the zone Worker Route targets `golden-years-api-next`, and leave production staging-gate secrets unset. Check both the partner page and `POST /api/v1/get_health`, then probe `POST https://www.goldenyears.asia/api/v1/partner/get_facility_manager_dashboard` with `{"facility_id":"probe"}`; the route must not return `404` (without a partner session, an auth/validation error is expected). The full staging and production checklist is in the workspace `docs/deployment/cloudflare.md`.
